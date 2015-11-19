@@ -26,13 +26,17 @@ class Sound : public QObject
 {
 public:
 	Sound(int name, const QString& filename, QObject* parent = 0);
+	Sound(const QString& filename, QObject* parent = 0);
 	~Sound();
 
 	bool isValid() const;
 
 	static void play(int name);
+	static void playRandom();
 	static void setEnabled(bool enabled);
+	static void setRandomEnabled(bool enabled);
 	static void setPath(const QString& path);
+	static QString getPath();
 
 private:
 	int m_id;

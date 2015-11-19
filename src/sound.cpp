@@ -30,15 +30,18 @@ namespace
 	// Shared data
 	QString f_path;
 	bool f_enabled = false;
+	bool f_random_enabled = false;
 
 	QList<QList<QSound*> > f_sounds;
 	int f_total_sounds = 0;
 	QHash<QString, int> f_ids;
-	QHash<int, Sound*> f_sound_objects;
+	QHash<int, Sound*> f_sound_objects;	// Per-key sounds.
+	QList<Sound*> f_random_sounds;		// Random musical sounds.
 }
 
 //-----------------------------------------------------------------------------
 
+// Standard sounds on a per-key basis.
 Sound::Sound(int name, const QString& filename, QObject* parent) :
 	QObject(parent),
 	m_id(-1),
@@ -56,6 +59,26 @@ Sound::Sound(int name, const QString& filename, QObject* parent) :
 	}
 
 	f_sound_objects[m_name] = this;
+}
+
+// "Random" sounds (don't care about specific keys).
+Sound::Sound(const QString& filename, QObject* parent) :
+	QObject(parent),
+	m_id(-1),
+	m_name(-1)
+{
+	++f_total_sounds;
+
+	if (f_ids.contains(filename)) {
+		m_id = f_ids.value(filename);
+	} else {
+		m_id = f_sounds.count();
+		QSound* sound = new QSound(f_path + "/" + filename);
+		f_sounds.append(QList<QSound*>() << sound);
+		f_ids[filename] = m_id;
+	}
+
+	f_random_sounds.append(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,9 +128,43 @@ void Sound::play(int name)
 
 //-----------------------------------------------------------------------------
 
+void Sound::playRandom()
+{
+	if (!f_random_enabled) {
+		return;
+	}
+
+	Sound* sound = f_random_sounds.at(qrand() % f_random_sounds.size());
+	if (!sound || !sound->isValid()) {
+		return;
+	}
+
+	QSound* qsound = 0;
+	QList<QSound*>& sounds = f_sounds[sound->m_id];
+	int count = sounds.count();
+	for (int i = 0; i < count; ++i) {
+		if (sounds.at(i)->isFinished()) {
+			qsound = sounds.at(i);
+			break;
+		}
+	}
+	if (qsound == 0) {
+		qsound = new QSound(sounds.first()->fileName());
+		sounds.append(qsound);
+	}
+	qsound->play();
+}
+
+//-----------------------------------------------------------------------------
+
 void Sound::setEnabled(bool enabled)
 {
 	f_enabled = enabled;
+}
+
+void Sound::setRandomEnabled(bool enabled)
+{
+	f_random_enabled = enabled;
 }
 
 //-----------------------------------------------------------------------------
@@ -115,6 +172,13 @@ void Sound::setEnabled(bool enabled)
 void Sound::setPath(const QString& path)
 {
 	f_path = path;
+}
+
+//-----------------------------------------------------------------------------
+
+QString Sound::getPath()
+{
+	return f_path;
 }
 
 //-----------------------------------------------------------------------------

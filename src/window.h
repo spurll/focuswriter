@@ -130,6 +130,7 @@ private:
 	TimerManager* m_timers;
 	Sound* m_key_sound;
 	Sound* m_enter_key_sound;
+	QList<Sound*>* m_random_key_sounds;
 
 	QWidget* m_footer;
 	QLabel* m_character_label;

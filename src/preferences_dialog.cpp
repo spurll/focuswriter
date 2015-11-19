@@ -183,6 +183,7 @@ PreferencesDialog::PreferencesDialog(DailyProgress* daily_progress, QWidget* par
 	m_double_quotes->setCurrentIndex(Preferences::instance().doubleQuotes());
 	m_single_quotes->setCurrentIndex(Preferences::instance().singleQuotes());
 	m_typewriter_sounds->setChecked(Preferences::instance().typewriterSounds());
+	m_musical_key_sounds->setChecked(Preferences::instance().musicalKeySounds());
 
 	m_scene_divider->setText(Preferences::instance().sceneDivider());
 
@@ -310,6 +311,7 @@ void PreferencesDialog::accept()
 	Preferences::instance().setDoubleQuotes(m_double_quotes->currentIndex());
 	Preferences::instance().setSingleQuotes(m_single_quotes->currentIndex());
 	Preferences::instance().setTypewriterSounds(m_typewriter_sounds->isChecked());
+	Preferences::instance().setMusicalKeySounds(m_musical_key_sounds->isChecked());
 
 	Preferences::instance().setSceneDivider(m_scene_divider->text());
 
@@ -716,6 +718,7 @@ QWidget* PreferencesDialog::initGeneralTab()
 	m_block_cursor = new QCheckBox(tr("Block insertion cursor"), edit_group);
 	m_smooth_fonts = new QCheckBox(tr("Smooth fonts"), edit_group);
 	m_typewriter_sounds = new QCheckBox(tr("Typewriter sounds"), edit_group);
+	m_musical_key_sounds = new QCheckBox(tr("Musical key sounds"), edit_group);
 
 	m_smart_quotes = new QCheckBox(tr("Smart quotes:"), edit_group);
 	m_double_quotes = new QComboBox(edit_group);
@@ -744,6 +747,7 @@ QWidget* PreferencesDialog::initGeneralTab()
 	edit_layout->addWidget(m_smooth_fonts);
 	edit_layout->addLayout(quotes_layout);
 	edit_layout->addWidget(m_typewriter_sounds);
+	edit_layout->addWidget(m_musical_key_sounds);
 
 	// Create section options
 	QGroupBox* scene_group = new QGroupBox(tr("Scenes"), tab);

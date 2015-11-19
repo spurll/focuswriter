@@ -25,6 +25,7 @@
 #include <QLocale>
 #include <QSettings>
 #include <QTimer>
+#include <cmath>
 
 //-----------------------------------------------------------------------------
 
@@ -384,7 +385,7 @@ QVariant DailyProgress::headerData(int section, Qt::Orientation orientation, int
 
 int DailyProgress::rowCount(const QModelIndex& parent) const
 {
-	return parent.isValid() ? 0 : std::ceil(m_progress.size() / 7.0);
+	return parent.isValid() ? 0 : ceil(m_progress.size() / 7.0);
 }
 
 //-----------------------------------------------------------------------------

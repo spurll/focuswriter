@@ -78,6 +78,7 @@ public:
 	int doubleQuotes() const;
 	int singleQuotes() const;
 	bool typewriterSounds() const;
+	bool musicalKeySounds() const;
 	void setAlwaysCenter(bool center);
 	void setBlockCursor(bool block);
 	void setSmoothFonts(bool smooth);
@@ -85,6 +86,7 @@ public:
 	void setDoubleQuotes(int quotes);
 	void setSingleQuotes(int quotes);
 	void setTypewriterSounds(bool sounds);
+	void setMusicalKeySounds(bool sounds);
 
 	QString sceneDivider() const;
 	void setSceneDivider(const QString& divider);
@@ -152,6 +154,7 @@ private:
 	int m_double_quotes;
 	int m_single_quotes;
 	bool m_typewriter_sounds;
+	bool m_musical_key_sounds;
 
 	QString m_scene_divider;
 

@@ -313,6 +313,13 @@ bool Preferences::typewriterSounds() const
 
 //-----------------------------------------------------------------------------
 
+bool Preferences::musicalKeySounds() const
+{
+	return m_musical_key_sounds;
+}
+
+//-----------------------------------------------------------------------------
+
 void Preferences::setAlwaysCenter(bool center)
 {
 	setValue(m_always_center, center);
@@ -358,6 +365,13 @@ void Preferences::setSingleQuotes(int quotes)
 void Preferences::setTypewriterSounds(bool sounds)
 {
 	setValue(m_typewriter_sounds, sounds);
+}
+
+//-----------------------------------------------------------------------------
+
+void Preferences::setMusicalKeySounds(bool sounds)
+{
+	setValue(m_musical_key_sounds, sounds);
 }
 
 //-----------------------------------------------------------------------------
@@ -598,6 +612,7 @@ void Preferences::reload()
 	m_double_quotes = settings.value("Edit/SmartDoubleQuotes", -1).toInt();
 	m_single_quotes = settings.value("Edit/SmartSingleQuotes", -1).toInt();
 	m_typewriter_sounds = settings.value("Edit/TypewriterSounds", false).toBool();
+	m_musical_key_sounds = settings.value("Edit/MusicalKeySounds", false).toBool();
 
 	m_scene_divider = settings.value("SceneList/Divider", QLatin1String("##")).toString();
 	SceneModel::setSceneDivider(m_scene_divider);
@@ -661,6 +676,7 @@ void Preferences::write()
 	settings.setValue("Edit/SmartDoubleQuotes", m_double_quotes);
 	settings.setValue("Edit/SmartSingleQuotes", m_single_quotes);
 	settings.setValue("Edit/TypewriterSounds", m_typewriter_sounds);
+	settings.setValue("Edit/MusicalKeySounds", m_musical_key_sounds);
 
 	settings.setValue("SceneList/Divider", m_scene_divider);
 

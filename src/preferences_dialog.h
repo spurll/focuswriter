@@ -83,6 +83,7 @@ private:
 	QComboBox* m_double_quotes;
 	QComboBox* m_single_quotes;
 	QCheckBox* m_typewriter_sounds;
+	QCheckBox* m_musical_key_sounds;
 	QLineEdit* m_scene_divider;
 	QCheckBox* m_auto_save;
 	QCheckBox* m_save_positions;

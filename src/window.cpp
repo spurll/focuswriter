@@ -92,6 +92,7 @@ Window::Window(const QStringList& command_line_files) :
 	m_loading(false),
 	m_key_sound(0),
 	m_enter_key_sound(0),
+	m_random_key_sounds(0),
 	m_fullscreen(true),
 	m_auto_save(true),
 	m_save_positions(true)
@@ -1141,8 +1142,9 @@ void Window::loadPreferences()
 {
 	if (Preferences::instance().typewriterSounds() && (!m_key_sound || !m_enter_key_sound)) {
 		if (m_load_screen->isVisible()) {
-			m_load_screen->setText(tr("Loading sounds"));
+			m_load_screen->setText(tr("Loading typewriter sounds"));
 		}
+
 		m_key_sound = new Sound(Qt::Key_Any, "keyany.wav", this);
 		m_enter_key_sound = new Sound(Qt::Key_Enter, "keyenter.wav", this);
 
@@ -1158,6 +1160,36 @@ void Window::loadPreferences()
 		}
 	}
 	Sound::setEnabled(Preferences::instance().typewriterSounds());
+
+	if (Preferences::instance().musicalKeySounds() && !m_random_key_sounds) {
+		if (m_load_screen->isVisible()) {
+			m_load_screen->setText(tr("Loading musical key sounds"));
+		}
+
+		QDir sound_dir(Sound::getPath());
+		QStringList filters;
+		filters << "musicalkey*.wav";
+		QStringList sound_files = sound_dir.entryList(filters);
+		m_random_key_sounds = new QList<Sound*>();
+		for (const QString sound_file : sound_files) {
+			m_random_key_sounds->append(new Sound(sound_file, this));
+			if(!m_random_key_sounds->last()->isValid()) {
+				delete m_random_key_sounds->last();
+				m_random_key_sounds->removeLast();
+			}
+		}
+
+		if (m_random_key_sounds->empty()) {
+			m_documents->alerts()->addAlert(new Alert(Alert::Warning,
+				tr("Unable to load musical key sounds."),
+				QStringList(),
+				false));
+			delete m_random_key_sounds;
+			m_random_key_sounds = 0;
+			Preferences::instance().setMusicalKeySounds(false);
+		}
+	}
+	Sound::setRandomEnabled(Preferences::instance().musicalKeySounds());
 
 	m_auto_save = Preferences::instance().autoSave();
 	if (m_auto_save) {

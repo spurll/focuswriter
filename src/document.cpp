@@ -68,6 +68,7 @@
 
 #include <algorithm>
 #include <ctime>
+#include <cstdlib>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -266,8 +267,10 @@ namespace
 					!(event->modifiers().testFlag(Qt::MetaModifier))) {
 				if ((key == Qt::Key_Return) || (key == Qt::Key_Enter)) {
 					Sound::play(Qt::Key_Enter);
+					Sound::playRandom();
 				} else if ((key < Qt::Key_Escape) || (key == Qt::Key_unknown)) {
 					Sound::play(Qt::Key_Any);
+					Sound::playRandom();
 				}
 			}
 		}
@@ -277,6 +280,7 @@ namespace
 	{
 		QTextEdit::inputMethodEvent(event);
 		Sound::play(Qt::Key_Any);
+		Sound::playRandom();
 	}
 
 	QByteArray TextEdit::mimeToRtf(const QMimeData* source) const
