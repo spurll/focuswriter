@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +263,6 @@ namespace
 			// Play sound effect
 			int key = event->key();
 			if (!(event->modifiers().testFlag(Qt::ControlModifier)) &&
-					!(event->modifiers().testFlag(Qt::AltModifier)) &&
 					!(event->modifiers().testFlag(Qt::MetaModifier))) {
 				if ((key == Qt::Key_Return) || (key == Qt::Key_Enter)) {
 					Sound::play(Qt::Key_Enter);
@@ -861,7 +860,7 @@ bool Document::loadFile(const QString& filename, int position)
 
 //-----------------------------------------------------------------------------
 
-void Document::loadTheme(const Theme& theme, const QBrush& foreground)
+void Document::loadTheme(const Theme& theme)
 {
 	m_text->document()->blockSignals(true);
 
@@ -872,7 +871,7 @@ void Document::loadTheme(const Theme& theme, const QBrush& foreground)
 	text_color.setAlpha(m_focus_mode ? 128 : 255);
 
 	QPalette p = m_text->palette();
-	p.setBrush(QPalette::Base, foreground);
+	p.setBrush(QPalette::Base, Qt::transparent);
 	p.setColor(QPalette::Text, text_color);
 	p.setColor(QPalette::Highlight, m_text_color);
 	p.setColor(QPalette::HighlightedText, (qGray(m_text_color.rgb()) > 127) ? Qt::black : Qt::white);
@@ -1171,8 +1170,8 @@ void Document::focusText()
 		break;
 
 	case 2: // Current line and previous two lines
-		selection.cursor.movePosition(QTextCursor::StartOfLine);
 		selection.cursor.movePosition(QTextCursor::Up);
+		selection.cursor.movePosition(QTextCursor::StartOfLine);
 		selection.cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, 2);
 		selection.cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
 		break;

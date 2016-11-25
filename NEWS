@@ -1,3 +1,51 @@
+1.6.2
+-----
+* Generate binary translations at build time.
+* FIXED: Focused text did not handle first-line indent.
+* FIXED: Was not properly loading Qt translations.
+* Translation updates: Armenian, Dutch, Italian, Lithuanian, Portuguese (Brazil), Romanian, Swedish, Ukrainian.
+
+1.6.1
+-----
+* FIXED: Incorrectly handled non-heading text in OOXML.
+* FIXED: Misspelled words did not follow heading style.
+* FIXED: Did not always close OOXML paragraph properties correctly.
+* FIXED: Did not correctly store RTL in OOXML.
+* FIXED: Reported conflicts for empty shortcuts.
+* FIXED: Switched to incorrect tab to show conflicting shortcuts.
+* Translation updates: German, Romanian.
+
+1.6.0
+-----
+* Added always showing interface.
+* Added headings.
+* Added new default themes.
+* Added removing user-installed dictionaries.
+* Added shortcut for typographical apostrophe.
+* Added support for ODT Flat XML files.
+* Added support for high DPI displays.
+* Switched to QSoundEffect.
+* Updated dictionaries.
+* FIXED: Daily progress did not reset when run longer than a day.
+* FIXED: Printer margins were too big.
+* FIXED: Was replacing session files with command-line files.
+* FIXED: Did not add new default symbol shortcuts.
+* Translation updates: Arabic, Armenian, Catalan, Chinese (China), Dutch, English (United Kingdom), French, German, Hebrew, Hungarian, Italian, Lithuanian, Polish, Portuguese (Brazil), Romanian, Russian, Slovak, Spanish, Spanish (Mexico), Turkish, Vietnamese.
+
+1.5.7
+-----
+* Switched to cross-compiled builds for Windows.
+* FIXED: Did not play sounds for key presses with Alt modifier.
+* FIXED: Could not change shortcut to disable focused text.
+
+1.5.6
+-----
+* Updated included hunspell.
+* FIXED: Did not remember some default formats.
+* FIXED: Replace all did not update spellchecking.
+* FIXED: Themes still did not always forget changes.
+* Translation updates: Afrikaans (South Africa), Danish, Esperanto, Hebrew, Lithuanian, Spanish.
+
 1.5.5
 -----
 * Added support for pasting RTF in Windows.

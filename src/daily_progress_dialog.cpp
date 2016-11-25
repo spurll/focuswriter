@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2013, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,13 @@ public:
 			if (progress == 0) {
 				opt.backgroundBrush = opt.palette.alternateBase();
 			} else if (progress == 100) {
-				opt.backgroundBrush.setTexture(fetchStarBackground(opt));
+#if (QT_VERSION >= QT_VERSION_CHECK(5,6,0))
+				const qreal pixelratio = painter->device()->devicePixelRatioF();
+#else
+				const qreal pixelratio = painter->device()->devicePixelRatio();
+#endif
+				painter->drawPixmap(QPointF(opt.rect.topLeft()), fetchStarBackground(opt, pixelratio));
+				opt.backgroundBrush = Qt::transparent;
 				opt.font.setBold(true);
 			} else {
 				qreal k = (progress * 0.009) + 0.1;
@@ -96,17 +102,18 @@ public:
 	}
 
 private:
-	QPixmap fetchStarBackground(const QStyleOptionViewItem& option) const
+	QPixmap fetchStarBackground(const QStyleOptionViewItem& option, const qreal pixelratio) const
 	{
-		if (m_pixmap.size() != option.rect.size()) {
+		if (m_pixmap.size() != (option.rect.size() * pixelratio)) {
 			// Create success background image
 			QStyleOptionViewItem opt = option;
 			opt.rect = QRect(QPoint(0,0), opt.rect.size());
-			m_pixmap = QPixmap(opt.rect.size());
+			m_pixmap = QPixmap(opt.rect.size() * pixelratio);
+			m_pixmap.setDevicePixelRatio(pixelratio);
 
 			// Draw view item background
 			QPainter p(&m_pixmap);
-			p.fillRect(opt.rect, opt.palette.color(QPalette::Active, QPalette::Base));
+			p.fillRect(QRectF(opt.rect), opt.palette.color(QPalette::Active, QPalette::Base));
 			opt.backgroundBrush = opt.palette.color(QPalette::Active, QPalette::Highlight);
 			QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 			style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, &p, opt.widget);

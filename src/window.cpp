@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -860,7 +860,7 @@ void Window::aboutClicked()
 		"<p align='center'>%6<br/><small>%7</small></p>")
 		.arg(tr("FocusWriter"), QApplication::applicationVersion(),
 			tr("A simple fullscreen word processor"),
-			tr("Copyright &copy; 2008-%1 Graeme Gott").arg("2015"),
+			tr("Copyright &copy; 2008-%1 Graeme Gott").arg("2016"),
 			tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\""),
 			tr("Uses icons from the <a href=%1>Oxygen</a> icon theme").arg("\"http://www.oxygen-icons.org/\""),
 			tr("Used under the <a href=%1>LGPL 3</a> license").arg("\"http://www.gnu.org/licenses/lgpl.html\""))
@@ -1450,10 +1450,10 @@ void Window::initMenus()
 	tools_menu->addSeparator();
 	QMenu* quotes_menu = tools_menu->addMenu(tr("Smart &Quotes"));
 	m_replace_document_quotes = quotes_menu->addAction(tr("Update &Document"), m_documents, SLOT(updateSmartQuotes()));
-	m_replace_document_quotes->setStatusTip("Update Document Smart Quotes");
+	m_replace_document_quotes->setStatusTip(tr("Update Document Smart Quotes"));
 	ActionManager::instance()->addAction("SmartQuotesUpdateDocument", m_replace_document_quotes);
 	m_replace_selection_quotes = quotes_menu->addAction(tr("Update &Selection"), m_documents, SLOT(updateSmartQuotesSelection()));
-	m_replace_selection_quotes->setStatusTip("Update Selection Smart Quotes");
+	m_replace_selection_quotes->setStatusTip(tr("Update Selection Smart Quotes"));
 	ActionManager::instance()->addAction("SmartQuotesUpdateSelection", m_replace_selection_quotes);
 	tools_menu->addSeparator();
 	m_actions["CheckSpelling"] = tools_menu->addAction(QIcon::fromTheme("tools-check-spelling"), tr("&Spelling..."), m_documents, SLOT(checkSpelling()), tr("F7"));
@@ -1508,9 +1508,11 @@ void Window::initMenus()
 		focus_mode[i]->setCheckable(true);
 		focus_mode[i]->setData(i);
 		m_focus_actions->addAction(focus_mode[i]);
-		ActionManager::instance()->addAction(QString("FocusedText%1").arg(i), focus_mode[i]);
 	}
 	focus_mode[0]->setShortcut(tr("Ctrl+Shift+`"));
+	for (int i = 0; i < 4; ++i) {
+		ActionManager::instance()->addAction(QString("FocusedText%1").arg(i), focus_mode[i]);
+	}
 	focus_mode[qBound(0, QSettings().value("Window/FocusedText").toInt(), 3)]->setChecked(true);
 	connect(m_focus_actions, SIGNAL(triggered(QAction*)), m_documents, SLOT(setFocusMode(QAction*)));
 

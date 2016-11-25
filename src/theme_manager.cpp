@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2012, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2012, 2014, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "theme_dialog.h"
 #include "utils.h"
 
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFile>
@@ -100,9 +101,13 @@ ThemeManager::ThemeManager(QSettings& settings, QWidget* parent)
 	m_default_themes->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	m_default_themes->setMinimumSize(view_size);
 	m_default_themes->setWordWrap(true);
+	addItem("bitterskies", true, tr("Bitter Skies"));
+	addItem("enchantment", true, tr("Enchantment"));
 	addItem("gentleblues", true, tr("Gentle Blues"));
 	addItem("oldschool", true, tr("Old School"));
 	addItem("spacedreams", true, tr("Space Dreams"));
+	addItem("spygames", true, tr("Spy Games"));
+	addItem("tranquility", true, tr("Tranquility"));
 	addItem("writingdesk", true, tr("Writing Desk"));
 
 	// Add default control buttons
@@ -273,7 +278,7 @@ void ThemeManager::editTheme()
 	}
 
 	item->setText(theme.name());
-	item->setIcon(QIcon(Theme::iconPath(theme.id(), false)));
+	item->setIcon(QIcon(Theme::iconPath(theme.id(), false, devicePixelRatioF())));
 	emit themeSelected(theme);
 }
 
@@ -307,7 +312,7 @@ void ThemeManager::deleteTheme()
 	if (QMessageBox::question(this, tr("Question"), tr("Delete theme '%1'?").arg(item->text()), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
 		QString id = item->data(Qt::UserRole).toString();
 		QFile::remove(Theme::filePath(id));
-		QFile::remove(Theme::iconPath(id));
+		Theme::removeIcon(id, false);
 		delete item;
 		item = 0;
 
@@ -376,6 +381,7 @@ void ThemeManager::importTheme()
 
 		Theme theme(id, false);
 		theme.setBackgroundImage(file.fileName());
+		theme.saveChanges();
 	}
 
 	theme_ini.sync();
@@ -458,10 +464,34 @@ void ThemeManager::currentThemeChanged(QListWidgetItem* current)
 
 QListWidgetItem* ThemeManager::addItem(const QString& id, bool is_default, const QString& name)
 {
-	QString icon = Theme::iconPath(id, is_default);
-	if (!QFile::exists(icon) || QImageReader(icon).size() != QSize(258, 153)) {
-		ThemeDialog::createPreview(id, is_default);
+	const qreal pixelratio = devicePixelRatioF();
+	QString icon = Theme::iconPath(id, is_default, pixelratio);
+	if (!QFile::exists(icon) || QImageReader(icon).size() != (QSize(258, 153) * pixelratio)) {
+		Theme theme(id, is_default);
+
+		// Find load color in separate thread
+		QFuture<QColor> load_color;
+		if (!theme.isDefault() && (theme.loadColor() == theme.backgroundColor())) {
+			load_color = theme.calculateLoadColor();
+		}
+
+		// Generate preview
+		QRect foreground;
+		QImage background = theme.render(QSize(1920, 1080), foreground, 0, pixelratio);
+		QImage icon;
+		theme.renderText(background, foreground, pixelratio, nullptr, &icon);
+		icon.save(Theme::iconPath(theme.id(), theme.isDefault(), pixelratio));
+
+		// Save load color
+		load_color.waitForFinished();
+		if (load_color.resultCount()) {
+			theme.setLoadColor(load_color);
+			theme.saveChanges();
+		}
+
+		QApplication::processEvents();
 	}
+
 	QListWidgetItem* item = new ThemeItem(QIcon(icon), name, is_default ? m_default_themes : m_themes);
 	item->setToolTip(name);
 	item->setData(Qt::UserRole, id);

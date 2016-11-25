@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ void Stack::addDocument(Document* document)
 	m_menu->addAction(action);
 	updateMenuIndexes();
 
-	document->loadTheme(m_theme, m_foreground);
+	document->loadTheme(m_theme);
 	document->text()->setFixedSize(m_foreground_size);
 
 	emit documentAdded(document);
@@ -596,7 +596,7 @@ void Stack::themeSelected(const Theme& theme)
 	updateBackground();
 
 	for (Document* document : m_documents) {
-		document->loadTheme(theme, m_foreground);
+		document->loadTheme(theme);
 	}
 }
 
@@ -693,7 +693,9 @@ void Stack::mouseMoveEvent(QMouseEvent* event)
 void Stack::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
-	painter.drawPixmap(event->rect(), m_background, event->rect());
+	const qreal pixelratio = devicePixelRatioF();
+	const QRectF rect(event->rect().topLeft() * pixelratio, event->rect().size() * pixelratio);
+	painter.drawPixmap(event->rect(), m_background, rect);
 	painter.end();
 }
 
@@ -726,11 +728,13 @@ void Stack::insertSymbol(const QString& text)
 void Stack::updateBackground()
 {
 	const int margin = m_layout->rowMinimumHeight(0);
+	const qreal pixelratio = devicePixelRatioF();
 
 	// Create temporary background
-	QRect foreground = m_theme.foregroundRect(size(), margin);
+	const QRectF foreground = m_theme.foregroundRect(size(), margin, pixelratio);
 
-	QImage image(size(), QImage::Format_ARGB32_Premultiplied);
+	QImage image(size() * pixelratio, QImage::Format_ARGB32_Premultiplied);
+	image.setDevicePixelRatio(pixelratio);
 	image.fill(m_theme.loadColor().rgb());
 	{
 		QPainter painter(&image);
@@ -747,11 +751,11 @@ void Stack::updateBackground()
 		}
 	}
 
-	updateBackground(image, foreground);
+	updateBackground(image, foreground.toRect());
 
 	// Create proper background
 	if (!m_resize_timer->isActive()) {
-		m_theme_renderer->create(m_theme, size(), margin);
+		m_theme_renderer->create(m_theme, size(), margin, pixelratio);
 	}
 }
 
@@ -760,29 +764,21 @@ void Stack::updateBackground()
 void Stack::updateBackground(const QImage& image, const QRect& foreground)
 {
 	// Make sure image is correct size
-	if (image.size() != size()) {
+	if (image.size() != (size() * devicePixelRatioF())) {
 		return;
 	}
 
-	// Determine text area size
-	int padding = m_theme.foregroundPadding();
-	QRect foreground_rect = foreground.adjusted(padding, padding, -padding, -padding);
-	bool resize = !m_resize_timer->isActive() && (foreground_rect.size() != m_foreground_size);
-	if (resize) {
-		m_foreground_size = foreground_rect.size();
-	}
-
-	// Load background and foreground
+	// Load background
 	m_background = QPixmap::fromImage(image, Qt::AutoColor | Qt::AvoidDither);
-	m_foreground = image.copy(foreground_rect);
+	m_background.setDevicePixelRatio(devicePixelRatioF());
 
-	// Configure text area
-	for (Document* document : m_documents) {
-		QPalette p = document->text()->palette();
-		p.setBrush(QPalette::Base, m_foreground);
-		document->text()->setPalette(p);
+	// Determine text area size
+	const int padding = m_theme.foregroundPadding();
+	const QRect foreground_rect = foreground.adjusted(padding, padding, -padding, -padding);
+	if (!m_resize_timer->isActive() && (foreground_rect.size() != m_foreground_size)) {
+		m_foreground_size = foreground_rect.size();
 
-		if (resize) {
+		for (Document* document : m_documents) {
 			document->text()->setFixedSize(m_foreground_size);
 			document->centerCursor(true);
 		}

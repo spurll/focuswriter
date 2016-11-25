@@ -3,10 +3,10 @@
 
 !define APPNAME "FocusWriter"
 !define VERSIONMAJOR 1
-!define VERSIONMINOR 5
+!define VERSIONMINOR 6
 !define VERSIONPATCH 0
 !define APPVERSION "${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONPATCH}"
-!define ABOUTURL "http://gottcode.org/focuswriter/"
+!define ABOUTURL "https://gottcode.org/focuswriter/"
 
 ;--------------------------------
 ;Includes
@@ -162,7 +162,7 @@ Section "install"
 	;Copy files
 	SetOutPath $INSTDIR
 	File ..\..\release\FocusWriter.exe
-	File ..\symbols\symbols630.dat
+	File ..\symbols\symbols900.dat
 	File $%QTDIR%\bin\libgcc_s_dw2-1.dll
 	File $%QTDIR%\bin\libstdc++-6.dll
 	File $%QTDIR%\bin\libwinpthread-1.dll
@@ -171,15 +171,9 @@ Section "install"
 	File $%QTDIR%\bin\Qt5Multimedia.dll
 	File $%QTDIR%\bin\Qt5Network.dll
 	File $%QTDIR%\bin\Qt5PrintSupport.dll
+	File $%QTDIR%\bin\Qt5Svg.dll
 	File $%QTDIR%\bin\Qt5Widgets.dll
 	File $%QTDIR%\bin\Qt5WinExtras.dll
-
-	SetOutPath $INSTDIR\dictionaries
-	File dicts\*.aff
-	File dicts\*.dic
-	File dicts\*.dll
-	SetOutPath $INSTDIR\dictionaries\2\mor-standard
-	File dicts\2\mor-standard\*
 
 	SetOutPath $INSTDIR\audio
 	File $%QTDIR%\plugins\audio\qtaudio_windows.dll
@@ -188,21 +182,12 @@ Section "install"
 	File $%QTDIR%\plugins\bearer\qgenericbearer.dll
 	File $%QTDIR%\plugins\bearer\qnativewifibearer.dll
 
-	SetOutPath $INSTDIR\icons\hicolor
-	File ..\images\icons\oxygen\hicolor\index.theme
-	SetOutPath $INSTDIR\icons\hicolor\16
-	File ..\images\icons\oxygen\hicolor\16\*
-	SetOutPath $INSTDIR\icons\hicolor\22
-	File ..\images\icons\oxygen\hicolor\22\*
-
 	SetOutPath $INSTDIR\imageformats
 	File $%QTDIR%\plugins\imageformats\qdds.dll
 	File $%QTDIR%\plugins\imageformats\qgif.dll
 	File $%QTDIR%\plugins\imageformats\qicns.dll
 	File $%QTDIR%\plugins\imageformats\qico.dll
-	File $%QTDIR%\plugins\imageformats\qjp2.dll
 	File $%QTDIR%\plugins\imageformats\qjpeg.dll
-	File $%QTDIR%\plugins\imageformats\qmng.dll
 	File $%QTDIR%\plugins\imageformats\qsvg.dll
 	File $%QTDIR%\plugins\imageformats\qtga.dll
 	File $%QTDIR%\plugins\imageformats\qtiff.dll
@@ -219,6 +204,26 @@ Section "install"
 	SetOutPath $INSTDIR\printsupport
 	File $%QTDIR%\plugins\printsupport\windowsprintersupport.dll
 
+	SetOutPath $INSTDIR\dictionaries
+	File dicts\*.aff
+	File dicts\*.dic
+	File dicts\*.dll
+	SetOutPath $INSTDIR\dictionaries\2\mor-standard
+	File dicts\2\mor-standard\*
+
+	SetOutPath $INSTDIR\icons\hicolor
+	File ..\images\icons\oxygen\hicolor\index.theme
+	SetOutPath $INSTDIR\icons\hicolor\16
+	File ..\images\icons\oxygen\hicolor\16\*
+	SetOutPath $INSTDIR\icons\hicolor\22
+	File ..\images\icons\oxygen\hicolor\22\*
+	SetOutPath $INSTDIR\icons\hicolor\32
+	File ..\images\icons\oxygen\hicolor\32\*
+	SetOutPath $INSTDIR\icons\hicolor\48
+	File ..\images\icons\oxygen\hicolor\48\*
+	SetOutPath $INSTDIR\icons\hicolor\64
+	File ..\images\icons\oxygen\hicolor\64\*
+
 	SetOutPath $INSTDIR\sounds
 	File ..\sounds\*.wav
 
@@ -229,7 +234,7 @@ Section "install"
 
 	SetOutPath $INSTDIR\translations
 	File ..\..\translations\*.qm
-	File $%QTDIR%\translations\qt_*.qm
+	File $%QTDIR%\translations\qtbase_*.qm
 
 	;Create ReadMe file
 	SetOutPath $INSTDIR
@@ -309,7 +314,7 @@ Section "Uninstall"
 	Delete $INSTDIR\icons\hicolor\*\*
 	Delete $INSTDIR\imageformats\*.dll
 	Delete $INSTDIR\mediaservice\*.dll
-	Delete $INSTDIR\platforms\qwindows.dll
+	Delete $INSTDIR\platforms\*.dll
 	Delete $INSTDIR\printsupport\*.dll
 	Delete $INSTDIR\sounds\*.wav
 	Delete $INSTDIR\themes\*\*

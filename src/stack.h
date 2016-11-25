@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,11 @@ private slots:
 	void updateMenuIndexes();
 
 private:
+#if (QT_VERSION < QT_VERSION_CHECK(5,6,0))
+	qreal devicePixelRatioF() const { return devicePixelRatio(); }
+#endif
+
+private:
 	AlertLayer* m_alerts;
 	SceneList* m_scenes;
 	QMenu* m_menu;
@@ -153,7 +158,6 @@ private:
 
 	ThemeRenderer* m_theme_renderer;
 	QPixmap m_background;
-	QBrush m_foreground;
 	QSize m_foreground_size;
 	Theme m_theme;
 	QTimer* m_resize_timer;

@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2010, 2011, 2012, 2013 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2010, 2011, 2012, 2013, 2016 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  *
  ***********************************************************************/
 
-#include "../sound.h"
+#include "sound.h"
 
+#include <QApplication>
 #include <QHash>
-#include <QList>
-#include <QSound>
+#include <QSoundEffect>
 
 //-----------------------------------------------------------------------------
 
@@ -32,11 +32,10 @@ namespace
 	bool f_enabled = false;
 	bool f_random_enabled = false;
 
-	QList<QList<QSound*> > f_sounds;
-	int f_total_sounds = 0;
-	QHash<QString, int> f_ids;
+	int next_id = 0;
+
 	QHash<int, Sound*> f_sound_objects;	// Per-key sounds.
-	QList<Sound*> f_random_sounds;		// Random musical sounds.
+	QHash<int, Sound*> f_random_sounds; // Random musical sounds.
 }
 
 //-----------------------------------------------------------------------------
@@ -44,57 +43,79 @@ namespace
 // Standard sounds on a per-key basis.
 Sound::Sound(int name, const QString& filename, QObject* parent) :
 	QObject(parent),
-	m_id(-1),
-	m_name(name)
+	m_name(name),
+	m_id(-1)
 {
-	++f_total_sounds;
-
-	if (f_ids.contains(filename)) {
-		m_id = f_ids.value(filename);
-	} else {
-		m_id = f_sounds.count();
-		QSound* sound = new QSound(f_path + "/" + filename);
-		f_sounds.append(QList<QSound*>() << sound);
-		f_ids[filename] = m_id;
+	QSoundEffect* sound = new QSoundEffect(this);
+	sound->setSource(QUrl::fromLocalFile(f_path + "/" + filename));
+	while (sound->status() == QSoundEffect::Loading) {
+		QApplication::processEvents();
 	}
+	m_sounds.append(sound);
 
-	f_sound_objects[m_name] = this;
+	f_sound_objects.remove(m_name);
+	if (sound->status() != QSoundEffect::Error) {
+		f_sound_objects.insert(m_name, this);
+	}
 }
 
 // "Random" sounds (don't care about specific keys).
 Sound::Sound(const QString& filename, QObject* parent) :
 	QObject(parent),
-	m_id(-1),
-	m_name(-1)
+	m_name(-1),
+	m_id(-1)
 {
-	++f_total_sounds;
+	m_id = next_id++;
 
-	if (f_ids.contains(filename)) {
-		m_id = f_ids.value(filename);
-	} else {
-		m_id = f_sounds.count();
-		QSound* sound = new QSound(f_path + "/" + filename);
-		f_sounds.append(QList<QSound*>() << sound);
-		f_ids[filename] = m_id;
+	QSoundEffect* sound = new QSoundEffect(this);
+	sound->setSource(QUrl::fromLocalFile(f_path + "/" + filename));
+	while (sound->status() == QSoundEffect::Loading) {
+		QApplication::processEvents();
 	}
+	m_sounds.append(sound);
 
-	f_random_sounds.append(this);
+	f_random_sounds.remove(m_id);
+	if (sound->status() != QSoundEffect::Error) {
+		f_random_sounds.insert(m_id, this);
+	}
 }
 
 //-----------------------------------------------------------------------------
 
 Sound::~Sound()
 {
-	f_sound_objects[m_name] = 0;
-	--f_total_sounds;
-	if (f_total_sounds == 0) {
-		int count = f_sounds.count();
-		for (int i = 0; i < count; ++i) {
-			qDeleteAll(f_sounds[i]);
-		}
-		f_sounds.clear();
-		f_ids.clear();
+	if (f_sound_objects.contains(m_name)) {
+		f_sound_objects.remove(m_name);
 	}
+	if (f_random_sounds.contains(m_id)) {
+		f_random_sounds.remove(m_id);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+bool Sound::isValid() const
+{
+	return f_sound_objects.contains(m_name) || f_random_sounds.contains(m_id);
+}
+
+//-----------------------------------------------------------------------------
+
+void Sound::play()
+{
+	QSoundEffect* sound = nullptr;
+	for (int i = 0, end = m_sounds.size(); i < end; ++i) {
+		if (!m_sounds.at(i)->isPlaying()) {
+			sound = m_sounds.at(i);
+			break;
+		}
+	}
+	if (sound == nullptr) {
+		sound = new QSoundEffect(this);
+		sound->setSource(m_sounds.first()->source());
+		m_sounds.append(sound);
+	}
+	sound->play();
 }
 
 //-----------------------------------------------------------------------------
@@ -106,24 +127,9 @@ void Sound::play(int name)
 	}
 
 	Sound* sound = f_sound_objects.value(name);
-	if (!sound || !sound->isValid()) {
-		return;
+	if (sound && sound->isValid()) {
+		sound->play();
 	}
-
-	QSound* qsound = 0;
-	QList<QSound*>& sounds = f_sounds[sound->m_id];
-	int count = sounds.count();
-	for (int i = 0; i < count; ++i) {
-		if (sounds.at(i)->isFinished()) {
-			qsound = sounds.at(i);
-			break;
-		}
-	}
-	if (qsound == 0) {
-		qsound = new QSound(sounds.first()->fileName());
-		sounds.append(qsound);
-	}
-	qsound->play();
 }
 
 //-----------------------------------------------------------------------------
@@ -134,25 +140,10 @@ void Sound::playRandom()
 		return;
 	}
 
-	Sound* sound = f_random_sounds.at(qrand() % f_random_sounds.size());
-	if (!sound || !sound->isValid()) {
-		return;
+	Sound* sound = f_random_sounds.values().value(qrand() % f_random_sounds.size());
+	if (sound && sound->isValid()) {
+		sound->play();
 	}
-
-	QSound* qsound = 0;
-	QList<QSound*>& sounds = f_sounds[sound->m_id];
-	int count = sounds.count();
-	for (int i = 0; i < count; ++i) {
-		if (sounds.at(i)->isFinished()) {
-			qsound = sounds.at(i);
-			break;
-		}
-	}
-	if (qsound == 0) {
-		qsound = new QSound(sounds.first()->fileName());
-		sounds.append(qsound);
-	}
-	qsound->play();
 }
 
 //-----------------------------------------------------------------------------

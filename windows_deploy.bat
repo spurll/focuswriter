@@ -15,7 +15,7 @@ ECHO Copying translations
 SET TRANSLATIONS=%APP%\translations
 MKDIR %TRANSLATIONS%
 COPY translations\*.qm %TRANSLATIONS% >nul
-COPY %QTDIR%\translations\qt_*.qm %TRANSLATIONS% >nul
+COPY %QTDIR%\translations\qtbase_*.qm %TRANSLATIONS% >nul
 
 ECHO Copying icons
 SET ICONS=%APP%\icons\hicolor
@@ -33,7 +33,7 @@ MKDIR %SOUNDS%
 COPY resources\sounds\* %SOUNDS% >nul
 
 ECHO Copying symbols
-COPY resources\symbols\symbols630.dat %APP% >nul
+COPY resources\symbols\symbols900.dat %APP% >nul
 
 ECHO Copying themes
 SET THEMES=%APP%\themes
@@ -49,6 +49,7 @@ COPY %QTDIR%\bin\Qt5Gui.dll %APP% >nul
 COPY %QTDIR%\bin\Qt5Multimedia.dll %APP% >nul
 COPY %QTDIR%\bin\Qt5Network.dll %APP% >nul
 COPY %QTDIR%\bin\Qt5PrintSupport.dll %APP% >nul
+COPY %QTDIR%\bin\Qt5Svg.dll %APP% >nul
 COPY %QTDIR%\bin\Qt5Widgets.dll %APP% >nul
 COPY %QTDIR%\bin\Qt5WinExtras.dll %APP% >nul
 

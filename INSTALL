@@ -13,7 +13,8 @@ Linux:
     3.) Type 'sudo make install' to install the program.
 
 Mac OS X:
-    1.) Type 'qmake -spec macx-g++' to configure the program.
+    1.) Type 'qmake' to configure the program. (Make sure you're running the
+        correct version of qmake, if you have multiple versions installed.)
 
     2.) Type 'make' to compile the program.
 
@@ -27,3 +28,6 @@ Windows:
     3.) Type 'windows_deploy' to create a compressed image of the program. Note
         that you must have the 7z executable from 7-zip.org in your %PATH% for
         this to work.
+
+    4.) Browse to resources/windows/ and type 'makensis installer.nsi' to
+        create an installer of the program.
