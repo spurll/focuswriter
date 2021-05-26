@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <QHash>
+#include <random>
 #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 #include <QSoundEffect>
 #endif
@@ -71,6 +72,7 @@ Sound::Sound(const QString& filename, QObject* parent) :
 	m_name(-1),
 	m_id(-1)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 	m_id = next_id++;
 
 	QSoundEffect* sound = new QSoundEffect(this);
@@ -84,6 +86,9 @@ Sound::Sound(const QString& filename, QObject* parent) :
 	if (sound->status() != QSoundEffect::Error) {
 		f_random_sounds.insert(m_id, this);
 	}
+#else
+	Q_UNUSED(filename)
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -148,7 +153,7 @@ void Sound::playRandom()
 		return;
 	}
 
-	Sound* sound = f_random_sounds.values().value(qrand() % f_random_sounds.size());
+	Sound* sound = f_random_sounds.values().value(rand() % f_random_sounds.size());
 	if (sound && sound->isValid()) {
 		sound->play();
 	}
