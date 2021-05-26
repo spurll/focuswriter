@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2011-2021 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,8 @@ Application::Application(int& argc, char** argv) :
 	setOrganizationName("GottCode");
 #if !defined(Q_OS_WIN) && !defined(Q_OS_MAC)
 	setWindowIcon(QIcon::fromTheme("focuswriter", QIcon(":/focuswriter.png")));
+	setDesktopFileName("focuswriter");
 #endif
-
-	setAttribute(Qt::AA_UseHighDpiPixmaps, true);
 
 #ifndef Q_OS_MAC
 	setAttribute(Qt::AA_DontUseNativeMenuBar);
@@ -62,14 +61,14 @@ Application::Application(int& argc, char** argv) :
 
 	qputenv("UNICODEMAP_JP", "cp932");
 
-	m_files = arguments().mid(1);
 	processEvents();
 }
 
 //-----------------------------------------------------------------------------
 
-bool Application::createWindow()
+bool Application::createWindow(const QStringList& files)
 {
+	m_files = files;
 	if (isRunning()) {
 		sendMessage(m_files.join(QLatin1String("\n")));
 		return false;
@@ -80,7 +79,7 @@ bool Application::createWindow()
 #endif
 	m_window = new Window(m_files);
 	setActivationWindow(m_window);
-	connect(this, SIGNAL(messageReceived(QString)), m_window, SLOT(addDocuments(QString)));
+	connect(this, &Application::messageReceived, m_window, QOverload<const QString&>::of(&Window::addDocuments));
 
 	return true;
 }

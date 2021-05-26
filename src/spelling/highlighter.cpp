@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,9 @@
 #include "spell_checker.h"
 
 #include <QAction>
-#include <QApplication>
 #include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
-#include <QStyle>
 #include <QTextEdit>
 #include <QTimer>
 
@@ -42,12 +40,12 @@ Highlighter::Highlighter(QTextEdit* text, DictionaryRef& dictionary)
 	m_misspelled("#ff0000"),
 	m_changed(false)
 {
-	connect(m_text, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
+	connect(m_text, &QTextEdit::cursorPositionChanged, this, &Highlighter::cursorPositionChanged);
 
 	m_spell_timer = new QTimer(this);
 	m_spell_timer->setInterval(10);
 	m_spell_timer->setSingleShot(true);
-	connect(m_spell_timer, SIGNAL(timeout()), this, SLOT(updateSpelling()));
+	connect(m_spell_timer, &QTimer::timeout, this, &Highlighter::updateSpelling);
 
 	m_text->installEventFilter(this);
 	m_text->viewport()->installEventFilter(this);
@@ -94,21 +92,13 @@ bool Highlighter::eventFilter(QObject* watched, QEvent* event)
 		QTextBlock block = m_start_cursor.block();
 		int cursor = m_start_cursor.position() - block.position();
 
-		bool under_mouse = false;
-		QStringRef word;
-		QVector<QStringRef> words = static_cast<BlockStats*>(block.userData())->misspelled();
-		for (int i = 0; i < words.count(); ++i) {
-			word = words.at(i);
+		const auto words = static_cast<BlockStats*>(block.userData())->misspelled();
+		for (auto word : words) {
 			int delta = cursor - word.position();
-			if (delta >= 0 && delta <= word.length()) {
-				under_mouse = true;
-				break;
+			if (delta < 0 || delta > word.length()) {
+				continue;
 			}
-		}
 
-		if (!under_mouse) {
-			return false;
-		} else {
 			// Select misspelled word
 			m_cursor = m_start_cursor;
 			m_cursor.setPosition(word.position() + block.position());
@@ -135,12 +125,14 @@ bool Highlighter::eventFilter(QObject* watched, QEvent* event)
 			menu->addAction(m_check_action);
 
 			// Show menu
-			connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(suggestion(QAction*)));
+			connect(menu, &QMenu::triggered, this, &Highlighter::suggestion);
 			menu->exec(context_event->globalPos());
 			delete menu;
 
 			return true;
 		}
+
+		return false;
 	}
 }
 
@@ -165,12 +157,12 @@ void Highlighter::highlightBlock(const QString& text)
 	}
 
 	style.setUnderlineColor(m_misspelled);
-	style.setUnderlineStyle((QTextCharFormat::UnderlineStyle)QApplication::style()->styleHint(QStyle::SH_SpellCheckUnderlineStyle));
+	style.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 
 	int cursor = m_text->textCursor().position() - currentBlock().position();
-	QVector<QStringRef> words = stats->misspelled();
+	auto words = stats->misspelled();
 	for (int i = 0; i < words.count(); ++i) {
-		const QStringRef& word = words.at(i);
+		const auto& word = words.at(i);
 		int delta = cursor - word.position();
 		if (!m_changed || (delta < 0 || delta > word.length())) {
 			setFormat(word.position(), word.length(), style);

@@ -30,18 +30,6 @@
 <context>
     <name>DailyProgress</name>
     <message numerus="yes">
-        <source>%1% of %Ln minute(s)</source>
-        <translation>
-            <numerusform>%Ln 분 중 %1%</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%1% of %Ln word(s)</source>
-        <translation>
-            <numerusform>단어 %Ln 중 %1%</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <source>%Ln word(s)</source>
         <translation>
             <numerusform>단어 %Ln개</numerusform>
@@ -56,6 +44,18 @@
     <message>
         <source>0%</source>
         <translation>0%</translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln minute(s)</source>
+        <translation>
+            <numerusform>%Ln 분 중 %L1%</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln word(s)</source>
+        <translation>
+            <numerusform>단어 %Ln 중 %L1%</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -90,8 +90,8 @@
 <context>
     <name>DailyProgressLabel</name>
     <message>
-        <source>%1% of daily goal</source>
-        <translation>하루 목표의 %1% </translation>
+        <source>%L1% of daily goal</source>
+        <translation>하루 목표의 %L1% </translation>
     </message>
 </context>
 <context>
@@ -238,15 +238,15 @@
     </message>
     <message>
         <source>&amp;Find</source>
-        <translation>&amp;찾기</translation>
+        <translation>찾기</translation>
     </message>
     <message>
         <source>&amp;Replace</source>
-        <translation>&amp;바꾸기</translation>
+        <translation>바꾸기</translation>
     </message>
     <message>
         <source>Replace &amp;All</source>
-        <translation>&amp;모두 바꾸기</translation>
+        <translation>모두 바꾸기</translation>
     </message>
     <message>
         <source>Find</source>
@@ -282,10 +282,6 @@
         <translation>오픈 다큐먼트 텍스트</translation>
     </message>
     <message>
-        <source>OpenDocument Flat XML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Office Open XML</source>
         <translation>오피스 오픈 XML</translation>
     </message>
@@ -304,6 +300,10 @@
     <message>
         <source>All Supported Files</source>
         <translation>모든 지원되는 파일</translation>
+    </message>
+    <message>
+        <source>OpenDocument Flat XML</source>
+        <translation>오픈도큐먼트 플랫 XML</translation>
     </message>
 </context>
 <context>
@@ -473,10 +473,6 @@
         <translation>저장하기</translation>
     </message>
     <message>
-        <source>Automatically save changes</source>
-        <translation>자동으로 저장하기</translation>
-    </message>
-    <message>
         <source>Remember cursor position</source>
         <translation>커서 위치 저장하기</translation>
     </message>
@@ -513,32 +509,12 @@
         <translation>오늘의 하루 작업량을 0으로 초기화할까요?</translation>
     </message>
     <message>
-        <source>Remove current dictionary?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Write byte order mark in plain text files</source>
         <translation>일반 텍스트 파일에 바이트 순서 표식을 사용합니다.</translation>
     </message>
     <message>
         <source>Default format:</source>
         <translation>기본 포맷:</translation>
-    </message>
-    <message>
-        <source>User Interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show scrollbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show top bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show bottom bar</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Reset Today</source>
@@ -656,6 +632,26 @@
         <source>Personal Dictionary</source>
         <translation>개인 사전</translation>
     </message>
+    <message>
+        <source>Remove current dictionary?</source>
+        <translation>이 사전을 지울까요?</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation>사용자 인터페이스</translation>
+    </message>
+    <message>
+        <source>Always show scrollbar</source>
+        <translation>스크롤바 항상 보이기</translation>
+    </message>
+    <message>
+        <source>Always show top bar</source>
+        <translation>제목 줄 항상 보이기</translation>
+    </message>
+    <message>
+        <source>Always show bottom bar</source>
+        <translation>내용 표시 줄 항상 보이기</translation>
+    </message>
 </context>
 <context>
     <name>RtfReader</name>
@@ -729,7 +725,7 @@
     </message>
     <message>
         <source>S&amp;essions</source>
-        <translation>&amp;세션</translation>
+        <translation>세션</translation>
     </message>
     <message>
         <source>New</source>
@@ -785,7 +781,7 @@
     </message>
     <message>
         <source>&amp;New...</source>
-        <translation>&amp;새로 만들기...</translation>
+        <translation>새로 만들기...</translation>
     </message>
     <message>
         <source>Ctrl+Shift+N</source>
@@ -793,7 +789,7 @@
     </message>
     <message>
         <source>&amp;Manage...</source>
-        <translation>&amp;관리하기...</translation>
+        <translation>관리하기...</translation>
     </message>
     <message>
         <source>Ctrl+Shift+M</source>
@@ -834,23 +830,23 @@
     </message>
     <message>
         <source>&amp;Add</source>
-        <translation>&amp;더하기</translation>
+        <translation>더하기</translation>
     </message>
     <message>
         <source>&amp;Ignore</source>
-        <translation>&amp;그대로 둠</translation>
+        <translation>그대로 둠</translation>
     </message>
     <message>
         <source>I&amp;gnore All</source>
-        <translation>&amp;모두 그대로 둠</translation>
+        <translation>모두 그대로 둠</translation>
     </message>
     <message>
         <source>&amp;Change</source>
-        <translation>&amp;바꾸기</translation>
+        <translation>바꾸기</translation>
     </message>
     <message>
         <source>C&amp;hange All</source>
-        <translation>&amp;모두 바꿈</translation>
+        <translation>모두 바꿈</translation>
     </message>
     <message>
         <source>Not in dictionary:</source>
@@ -1112,14 +1108,6 @@
         <translation>기본 세션</translation>
     </message>
     <message>
-        <source>Bitter Skies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enchantment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Gentle Blues</source>
         <translation>편한 푸른색</translation>
     </message>
@@ -1130,14 +1118,6 @@
     <message>
         <source>Space Dreams</source>
         <translation>스페이스 드림</translation>
-    </message>
-    <message>
-        <source>Spy Games</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tranquility</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Writing Desk</source>
@@ -1190,6 +1170,22 @@
     <message>
         <source>Export Theme</source>
         <translation>테마 내보내기</translation>
+    </message>
+    <message>
+        <source>Bitter Skies</source>
+        <translation>비터 스카이</translation>
+    </message>
+    <message>
+        <source>Enchantment</source>
+        <translation>마법</translation>
+    </message>
+    <message>
+        <source>Spy Games</source>
+        <translation>스파이 게임</translation>
+    </message>
+    <message>
+        <source>Tranquility</source>
+        <translation>고요</translation>
     </message>
 </context>
 <context>
@@ -1453,35 +1449,35 @@
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;파일</translation>
+        <translation>파일</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;새로 만들기</translation>
+        <translation>새로 만들기</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>&amp;열기...</translation>
+        <translation>열기...</translation>
     </message>
     <message>
         <source>Reloa&amp;d</source>
-        <translation>&amp;새로 고침</translation>
+        <translation>새로 고침</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;저장</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation>&amp;다른 이름으로 저장...</translation>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>&amp;Rename...</source>
-        <translation>&amp;이름 바꾸기...</translation>
+        <translation>이름 바꾸기...</translation>
     </message>
     <message>
         <source>Save A&amp;ll</source>
-        <translation>&amp;모두 저장하기</translation>
+        <translation>모두 저장하기</translation>
     </message>
     <message>
         <source>Manage Sessions</source>
@@ -1493,19 +1489,15 @@
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;출력하기...</translation>
-    </message>
-    <message>
-        <source>Pa&amp;ge Setup...</source>
-        <translation type="unfinished"></translation>
+        <translation>출력하기...</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;닫기</translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;끝내기</translation>
+        <translation>끝내기</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -1513,31 +1505,31 @@
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;편집</translation>
+        <translation>편집</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>&amp;뒤로 무르기</translation>
+        <translation>뒤로 무르기</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation>&amp;다시 적용</translation>
+        <translation>다시 적용</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation>&amp;자르기</translation>
+        <translation>자르기</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>&amp;복사하기</translation>
+        <translation>복사하기</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation>&amp;붙여넣기</translation>
+        <translation>붙여넣기</translation>
     </message>
     <message>
         <source>Paste &amp;Unformatted</source>
-        <translation>&amp;서식을 유지한 채 붙여넣기</translation>
+        <translation>서식을 유지한 채 붙여넣기</translation>
     </message>
     <message>
         <source>Ctrl+Shift+V</source>
@@ -1545,11 +1537,11 @@
     </message>
     <message>
         <source>Select &amp;All</source>
-        <translation>&amp;모두 선택</translation>
+        <translation>모두 선택</translation>
     </message>
     <message>
         <source>Select &amp;Scene</source>
-        <translation>&amp;화면 선택</translation>
+        <translation>화면 선택</translation>
     </message>
     <message>
         <source>Ctrl+Shift+A</source>
@@ -1557,11 +1549,263 @@
     </message>
     <message>
         <source>Fo&amp;rmat</source>
-        <translation>&amp;양식</translation>
+        <translation>양식</translation>
+    </message>
+    <message>
+        <source>&amp;Bold</source>
+        <translation>볼드</translation>
+    </message>
+    <message>
+        <source>&amp;Italic</source>
+        <translation>이탤릭</translation>
+    </message>
+    <message>
+        <source>&amp;Underline</source>
+        <translation>밑줄 긋기</translation>
+    </message>
+    <message>
+        <source>Stri&amp;kethrough</source>
+        <translation>가운데 줄긋기</translation>
+    </message>
+    <message>
+        <source>Ctrl+K</source>
+        <translation>Ctrl+K</translation>
+    </message>
+    <message>
+        <source>Sup&amp;erscript</source>
+        <translation>위 첨자</translation>
+    </message>
+    <message>
+        <source>Ctrl+^</source>
+        <translation>Ctrl+^</translation>
+    </message>
+    <message>
+        <source>&amp;Subscript</source>
+        <translation>아래 첨자</translation>
+    </message>
+    <message>
+        <source>Ctrl+_</source>
+        <translation>Ctrl+_</translation>
+    </message>
+    <message>
+        <source>Align &amp;Left</source>
+        <translation>왼쪽 끝 맞춤</translation>
+    </message>
+    <message>
+        <source>Ctrl+{</source>
+        <translation>Ctrl+{</translation>
+    </message>
+    <message>
+        <source>Align &amp;Center</source>
+        <translation>가운데 줄맞춤</translation>
+    </message>
+    <message>
+        <source>Ctrl+|</source>
+        <translation>Ctrl+|</translation>
+    </message>
+    <message>
+        <source>Align &amp;Right</source>
+        <translation>오른쪽 끝 맞춤</translation>
+    </message>
+    <message>
+        <source>Ctrl+}</source>
+        <translation>Ctrl+}</translation>
+    </message>
+    <message>
+        <source>Align &amp;Justify</source>
+        <translation>양끝 맞춤</translation>
+    </message>
+    <message>
+        <source>Ctrl+J</source>
+        <translation>Ctrl+J</translation>
+    </message>
+    <message>
+        <source>&amp;Decrease Indent</source>
+        <translation>들여 쓰기</translation>
+    </message>
+    <message>
+        <source>Ctrl+&lt;</source>
+        <translation>Ctrl+&lt;</translation>
+    </message>
+    <message>
+        <source>I&amp;ncrease Indent</source>
+        <translation>내어 쓰기</translation>
+    </message>
+    <message>
+        <source>Ctrl+&gt;</source>
+        <translation>Ctrl+&gt;</translation>
+    </message>
+    <message>
+        <source>Le&amp;ft to Right Block</source>
+        <translation>왼쪽에서 오른쪽으로 쓰기 시작</translation>
+    </message>
+    <message>
+        <source>Ri&amp;ght to Left Block</source>
+        <translation>오른쪽에서 왼쪽으로 쓰기 시작</translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <translation>도구</translation>
+    </message>
+    <message>
+        <source>&amp;Find...</source>
+        <translation>찾아보기...</translation>
+    </message>
+    <message>
+        <source>Find &amp;Next</source>
+        <translation>다음에서 찾기</translation>
+    </message>
+    <message>
+        <source>Find Pre&amp;vious</source>
+        <translation>이전에서 찾기</translation>
+    </message>
+    <message>
+        <source>&amp;Replace...</source>
+        <translation>바꾸기...</translation>
+    </message>
+    <message>
+        <source>Ctrl+R</source>
+        <translation>Ctrl+R</translation>
+    </message>
+    <message>
+        <source>Smart &amp;Quotes</source>
+        <translation>지능형 따옴표</translation>
+    </message>
+    <message>
+        <source>Update &amp;Document</source>
+        <translation>문서에 적용</translation>
+    </message>
+    <message>
+        <source>Update &amp;Selection</source>
+        <translation>선택한 내용 적용</translation>
+    </message>
+    <message>
+        <source>&amp;Spelling...</source>
+        <translation>맞춤법...</translation>
+    </message>
+    <message>
+        <source>F7</source>
+        <translation>F7</translation>
+    </message>
+    <message>
+        <source>Set &amp;Language...</source>
+        <translation>언어 설정...</translation>
+    </message>
+    <message>
+        <source>&amp;Timers...</source>
+        <translation>타이머...</translation>
+    </message>
+    <message>
+        <source>S&amp;ymbols...</source>
+        <translation>부호들...</translation>
+    </message>
+    <message>
+        <source>&amp;Daily Progress</source>
+        <translation>하루 진행량</translation>
+    </message>
+    <message>
+        <source>&amp;Settings</source>
+        <translation>설정</translation>
+    </message>
+    <message>
+        <source>Show &amp;Toolbar</source>
+        <translation>툴바 보이기</translation>
+    </message>
+    <message>
+        <source>Show &amp;Menu Icons</source>
+        <translation>메뉴 아이콘 보이기</translation>
+    </message>
+    <message>
+        <source>F&amp;ocused Text</source>
+        <translation>포커스 텍스트</translation>
+    </message>
+    <message>
+        <source>&amp;Fullscreen</source>
+        <translation>전체 화면</translation>
+    </message>
+    <message>
+        <source>F11</source>
+        <translation>F11</translation>
+    </message>
+    <message>
+        <source>Esc</source>
+        <translation>Esc</translation>
+    </message>
+    <message>
+        <source>M&amp;inimize</source>
+        <translation>최소화</translation>
+    </message>
+    <message>
+        <source>Ctrl+M</source>
+        <translation>Ctrl+M</translation>
+    </message>
+    <message>
+        <source>&amp;Themes...</source>
+        <translation>테마...</translation>
+    </message>
+    <message>
+        <source>&amp;Preferences...</source>
+        <translation>설정...</translation>
+    </message>
+    <message>
+        <source>Focus Off</source>
+        <translation>포커스 끔</translation>
+    </message>
+    <message>
+        <source>Focus One Line</source>
+        <translation>한 줄 포커스 </translation>
+    </message>
+    <message>
+        <source>Focus Three Lines</source>
+        <translation>세 줄 포커스 </translation>
+    </message>
+    <message>
+        <source>&amp;Paragraph</source>
+        <translation>문단</translation>
+    </message>
+    <message>
+        <source>Focus Paragraph</source>
+        <translation>문단 포커스 </translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation>도움말</translation>
+    </message>
+    <message>
+        <source>Application &amp;Language...</source>
+        <translation>프로그램 언어 설정...</translation>
+    </message>
+    <message>
+        <source>Some files were unsupported and could not be opened.</source>
+        <translation>지원되지 않는 파일이 있어서 열 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>&amp;Off</source>
+        <translation>사용 안함</translation>
+    </message>
+    <message>
+        <source>One &amp;Line</source>
+        <translation>한 줄</translation>
+    </message>
+    <message>
+        <source>&amp;Three Lines</source>
+        <translation>세 줄</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <translation>FocusWriter 소개</translation>
+    </message>
+    <message>
+        <source>About &amp;Qt</source>
+        <translation>Qt 소개</translation>
+    </message>
+    <message>
+        <source>Pa&amp;ge Setup...</source>
+        <translation>쪽 설정...</translation>
     </message>
     <message>
         <source>&amp;Heading</source>
-        <translation>&amp;머릿글</translation>
+        <translation>머릿글</translation>
     </message>
     <message>
         <source>Heading &amp;1</source>
@@ -1589,267 +1833,19 @@
     </message>
     <message>
         <source>&amp;Normal</source>
-        <translation>&amp;기본</translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation>&amp;볼드</translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation>&amp;이탤릭</translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation>&amp;밑줄 긋기</translation>
-    </message>
-    <message>
-        <source>Stri&amp;kethrough</source>
-        <translation>&amp;가운데 줄긋기</translation>
-    </message>
-    <message>
-        <source>Ctrl+K</source>
-        <translation>Ctrl+K</translation>
-    </message>
-    <message>
-        <source>Sup&amp;erscript</source>
-        <translation>&amp;위 첨자</translation>
-    </message>
-    <message>
-        <source>Ctrl+^</source>
-        <translation>Ctrl+^</translation>
-    </message>
-    <message>
-        <source>&amp;Subscript</source>
-        <translation>&amp;아래 첨자</translation>
-    </message>
-    <message>
-        <source>Ctrl+_</source>
-        <translation>Ctrl+_</translation>
-    </message>
-    <message>
-        <source>Align &amp;Left</source>
-        <translation>&amp;왼쪽 끝 맞춤</translation>
-    </message>
-    <message>
-        <source>Ctrl+{</source>
-        <translation>Ctrl+{</translation>
-    </message>
-    <message>
-        <source>Align &amp;Center</source>
-        <translation>&amp;가운데 줄맞춤</translation>
-    </message>
-    <message>
-        <source>Ctrl+|</source>
-        <translation>Ctrl+|</translation>
-    </message>
-    <message>
-        <source>Align &amp;Right</source>
-        <translation>&amp;오른쪽 끝 맞춤</translation>
-    </message>
-    <message>
-        <source>Ctrl+}</source>
-        <translation>Ctrl+}</translation>
-    </message>
-    <message>
-        <source>Align &amp;Justify</source>
-        <translation>&amp;양끝 맞춤</translation>
-    </message>
-    <message>
-        <source>Ctrl+J</source>
-        <translation>Ctrl+J</translation>
-    </message>
-    <message>
-        <source>&amp;Decrease Indent</source>
-        <translation>&amp;들여 쓰기</translation>
-    </message>
-    <message>
-        <source>Ctrl+&lt;</source>
-        <translation>Ctrl+&lt;</translation>
-    </message>
-    <message>
-        <source>I&amp;ncrease Indent</source>
-        <translation>&amp;내어 쓰기</translation>
-    </message>
-    <message>
-        <source>Ctrl+&gt;</source>
-        <translation>Ctrl+&gt;</translation>
-    </message>
-    <message>
-        <source>Le&amp;ft to Right Block</source>
-        <translation>&amp;왼쪽에서 오른쪽으로 쓰기 시작</translation>
-    </message>
-    <message>
-        <source>Ri&amp;ght to Left Block</source>
-        <translation>&amp;오른쪽에서 왼쪽으로 쓰기 시작</translation>
-    </message>
-    <message>
-        <source>&amp;Tools</source>
-        <translation>&amp;도구</translation>
-    </message>
-    <message>
-        <source>&amp;Find...</source>
-        <translation>&amp;찾아보기...</translation>
-    </message>
-    <message>
-        <source>Find &amp;Next</source>
-        <translation>&amp;다음에서 찾기</translation>
-    </message>
-    <message>
-        <source>Find Pre&amp;vious</source>
-        <translation>&amp;이전에서 찾기</translation>
-    </message>
-    <message>
-        <source>&amp;Replace...</source>
-        <translation>&amp;바꾸기...</translation>
-    </message>
-    <message>
-        <source>Ctrl+R</source>
-        <translation>Ctrl+R</translation>
-    </message>
-    <message>
-        <source>Smart &amp;Quotes</source>
-        <translation>&amp;지능형 따옴표</translation>
-    </message>
-    <message>
-        <source>Update &amp;Document</source>
-        <translation>&amp;문서에 적용</translation>
+        <translation>기본</translation>
     </message>
     <message>
         <source>Update Document Smart Quotes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update &amp;Selection</source>
-        <translation>&amp;선택한 내용 적용</translation>
+        <translation>지능형 따옴표 문서에 적용</translation>
     </message>
     <message>
         <source>Update Selection Smart Quotes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Spelling...</source>
-        <translation>&amp;맞춤법...</translation>
-    </message>
-    <message>
-        <source>F7</source>
-        <translation>F7</translation>
-    </message>
-    <message>
-        <source>Set &amp;Language...</source>
-        <translation>&amp;언어 설정...</translation>
-    </message>
-    <message>
-        <source>&amp;Timers...</source>
-        <translation>&amp;타이머...</translation>
-    </message>
-    <message>
-        <source>S&amp;ymbols...</source>
-        <translation>&amp;부호들...</translation>
-    </message>
-    <message>
-        <source>&amp;Daily Progress</source>
-        <translation>&amp;하루 진행량</translation>
-    </message>
-    <message>
-        <source>&amp;Settings</source>
-        <translation>&amp;설정</translation>
-    </message>
-    <message>
-        <source>Show &amp;Toolbar</source>
-        <translation>&amp;툴바 보이기</translation>
-    </message>
-    <message>
-        <source>Show &amp;Menu Icons</source>
-        <translation>&amp;메뉴 아이콘 보이기</translation>
-    </message>
-    <message>
-        <source>F&amp;ocused Text</source>
-        <translation>&amp;포커스 텍스트</translation>
-    </message>
-    <message>
-        <source>&amp;Fullscreen</source>
-        <translation>&amp;전체 화면</translation>
-    </message>
-    <message>
-        <source>F11</source>
-        <translation>F11</translation>
-    </message>
-    <message>
-        <source>Esc</source>
-        <translation>Esc</translation>
-    </message>
-    <message>
-        <source>M&amp;inimize</source>
-        <translation>&amp;최소화</translation>
-    </message>
-    <message>
-        <source>Ctrl+M</source>
-        <translation>Ctrl+M</translation>
-    </message>
-    <message>
-        <source>&amp;Themes...</source>
-        <translation>&amp;테마...</translation>
-    </message>
-    <message>
-        <source>&amp;Preferences...</source>
-        <translation>&amp;설정...</translation>
-    </message>
-    <message>
-        <source>Focus Off</source>
-        <translation>포커스 끔</translation>
-    </message>
-    <message>
-        <source>Focus One Line</source>
-        <translation>한 줄 포커스 </translation>
-    </message>
-    <message>
-        <source>Focus Three Lines</source>
-        <translation>세 줄 포커스 </translation>
-    </message>
-    <message>
-        <source>&amp;Paragraph</source>
-        <translation>&amp;문단</translation>
-    </message>
-    <message>
-        <source>Focus Paragraph</source>
-        <translation>문단 포커스 </translation>
+        <translation>선택한 내용에 지능형 따옴표 적용</translation>
     </message>
     <message>
         <source>Ctrl+Shift+`</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation>&amp;도움말</translation>
-    </message>
-    <message>
-        <source>Application &amp;Language...</source>
-        <translation>&amp;프로그램 언어 설정</translation>
-    </message>
-    <message>
-        <source>Some files were unsupported and could not be opened.</source>
-        <translation>지원되지 않는 파일이 있어서 열 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>&amp;Off</source>
-        <translation>&amp;사용 안함</translation>
-    </message>
-    <message>
-        <source>One &amp;Line</source>
-        <translation>&amp;한 줄</translation>
-    </message>
-    <message>
-        <source>&amp;Three Lines</source>
-        <translation>&amp;세 줄</translation>
-    </message>
-    <message>
-        <source>&amp;About</source>
-        <translation>&amp;FocusWriter 소개</translation>
-    </message>
-    <message>
-        <source>About &amp;Qt</source>
-        <translation>&amp;Qt 소개</translation>
+        <translation>Ctrl+Shift+`</translation>
     </message>
 </context>
 </TS>

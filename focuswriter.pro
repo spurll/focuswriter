@@ -1,39 +1,47 @@
-lessThan(QT_VERSION, 5.2) {
-	error("FocusWriter requires Qt 5.2 or greater")
-}
-win32:lessThan(QT_VERSION, 5.4) {
-	error("FocusWriter requires Qt 5.4 or greater")
+!versionAtLeast(QT_VERSION, 5.12) {
+	error("FocusWriter requires Qt 5.12 or greater")
 }
 
 TEMPLATE = app
-QT += network widgets printsupport multimedia concurrent
-macx {
-	QT += macextras
+QT += network widgets printsupport concurrent
+greaterThan(QT_MAJOR_VERSION, 5) {
+	QT += core5compat
 }
-win32 {
-	QT += winextras
+lessThan(QT_MAJOR_VERSION, 6) {
+	QT += multimedia
+	macx {
+		QT += macextras
+	} else:win32 {
+		QT += winextras
+	}
 }
-CONFIG += warn_on c++11
 macx {
 	QMAKE_INFO_PLIST = resources/mac/Info.plist
 }
+CONFIG += c++17
+
+CONFIG(debug, debug|release) {
+	CONFIG += warn_on
+	DEFINES += QT_DEPRECATED_WARNINGS
+	DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+	DEFINES += QT_NO_NARROWING_CONVERSIONS_IN_CONNECT
+}
 
 # Allow in-tree builds
-!win32 {
-	MOC_DIR = build
-	OBJECTS_DIR = build
-	RCC_DIR = build
-}
+MOC_DIR = build
+OBJECTS_DIR = build
+RCC_DIR = build
 
 # Set program version
-VERSION = $$system(git describe)
-isEmpty(VERSION) {
-	VERSION = 1.6.0
+VERSION = 1.7.0
+VERSIONSTR = $$system(git describe)
+isEmpty(VERSIONSTR) {
+	VERSIONSTR = $$VERSION
 }
-DEFINES += VERSIONSTR=\\\"$${VERSION}\\\"
+DEFINES += VERSIONSTR=\\\"$${VERSIONSTR}\\\"
 
 # Set program name
-unix: !macx {
+unix: !macx: !haiku {
 	TARGET = focuswriter
 } else {
 	TARGET = FocusWriter
@@ -41,29 +49,33 @@ unix: !macx {
 
 # Add dependencies
 macx {
-	DEFINES += RTFCLIPBOARD
+	lessThan(QT_MAJOR_VERSION, 6) {
+		DEFINES += RTFCLIPBOARD
+		HEADERS += src/fileformats/clipboard_mac.h
+		SOURCES += src/fileformats/clipboard_mac.cpp
+	}
 
 	LIBS += -lz -framework AppKit
 
-	HEADERS += src/fileformats/clipboard_mac.h \
-		src/spelling/dictionary_provider_nsspellchecker.h
-
+	HEADERS += src/spelling/dictionary_provider_nsspellchecker.h
 	OBJECTIVE_SOURCES += src/spelling/dictionary_provider_nsspellchecker.mm
-
-	SOURCES += src/fileformats/clipboard_mac.cpp
 } else:win32 {
-	DEFINES += RTFCLIPBOARD
+	lessThan(QT_MAJOR_VERSION, 6) {
+		DEFINES += RTFCLIPBOARD
+		HEADERS += src/fileformats/clipboard_windows.h
+		SOURCES += src/fileformats/clipboard_windows.cpp
+	}
+
+	DEFINES += HUNSPELL_STATIC
 
 	LIBS += -lz -lole32
 
 	INCLUDEPATH += src/spelling/hunspell
 
-	HEADERS += src/fileformats/clipboard_windows.h \
-		src/spelling/dictionary_provider_hunspell.h \
+	HEADERS += src/spelling/dictionary_provider_hunspell.h \
 		src/spelling/dictionary_provider_voikko.h
 
-	SOURCES += src/fileformats/clipboard_windows.cpp \
-		src/spelling/dictionary_provider_hunspell.cpp \
+	SOURCES += src/spelling/dictionary_provider_hunspell.cpp \
 		src/spelling/dictionary_provider_voikko.cpp \
 		src/spelling/hunspell/affentry.cxx \
 		src/spelling/hunspell/affixmgr.cxx \
@@ -104,7 +116,6 @@ HEADERS += src/action_manager.h \
 	src/document_watcher.h \
 	src/document_writer.h \
 	src/find_dialog.h \
-	src/font_combobox.h \
 	src/gzip.h \
 	src/image_button.h \
 	src/load_screen.h \
@@ -135,6 +146,7 @@ HEADERS += src/action_manager.h \
 	src/timer_manager.h \
 	src/utils.h \
 	src/window.h \
+	src/word_ref.h \
 	src/fileformats/docx_reader.h \
 	src/fileformats/docx_writer.h \
 	src/fileformats/format_manager.h \
@@ -172,7 +184,6 @@ SOURCES += src/action_manager.cpp \
 	src/document_watcher.cpp \
 	src/document_writer.cpp \
 	src/find_dialog.cpp \
-	src/font_combobox.cpp \
 	src/gzip.cpp \
 	src/image_button.cpp \
 	src/load_screen.cpp \
@@ -239,7 +250,7 @@ macx {
 	SOUNDS.files = resources/sounds
 	SOUNDS.path = Contents/Resources
 
-	SYMBOLS.files = resources/symbols/symbols900.dat
+	SYMBOLS.files = resources/symbols/symbols1300.dat
 	SYMBOLS.path = Contents/Resources
 
 	THEMES.files = resources/themes
@@ -247,7 +258,44 @@ macx {
 
 	QMAKE_BUNDLE_DATA += ICONS SOUNDS SYMBOLS THEMES
 } else:win32 {
-	RC_FILE = resources/windows/icon.rc
+	RC_ICONS = resources/windows/focuswriter.ico
+	QMAKE_TARGET_DESCRIPTION = "Fullscreen word processor"
+	QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2021 Graeme Gott"
+} else:haiku {
+	RESOURCES += resources/images/icons/icons.qrc
+
+	isEmpty(PREFIX) {
+		PREFIX = /boot/home/config/non-packaged/apps/FocusWriter
+	}
+	isEmpty(BINDIR) {
+		BINDIR = $$PREFIX
+	}
+	isEmpty(DATADIR) {
+		DATADIR = $$PREFIX/data
+	}
+	DEFINES += DATADIR=\\\"$$DATADIR\\\"
+	target.path = $$BINDIR
+
+	icons.files = resources/images/icons/oxygen/hicolor/*
+	icons.path = $$DATADIR/icons/hicolor
+
+	man.files = resources/unix/focuswriter.1
+	man.path = $$PREFIX/../../documentation/man/man1
+
+	qm.files = $$replace(TRANSLATIONS, .ts, .qm)
+	qm.path = $$DATADIR/translations
+	qm.CONFIG += no_check_exist
+
+	sounds.files = resources/sounds/*
+	sounds.path = $$DATADIR/sounds
+
+	themes.files = resources/themes/*
+	themes.path = $$DATADIR/themes
+
+	symbols.files = resources/symbols/symbols1300.dat
+	symbols.path = $$DATADIR
+
+	INSTALLS += target man icons qm sounds symbols themes
 } else:unix {
 	RESOURCES += resources/images/icons/icons.qrc
 
@@ -267,9 +315,6 @@ macx {
 	icon.files = resources/images/icons/hicolor/*
 	icon.path = $$DATADIR/icons/hicolor
 
-	pixmap.files = resources/unix/focuswriter.xpm
-	pixmap.path = $$DATADIR/pixmaps
-
 	icons.files = resources/images/icons/oxygen/hicolor/*
 	icons.path = $$DATADIR/focuswriter/icons/hicolor
 
@@ -277,12 +322,12 @@ macx {
 	desktop.path = $$DATADIR/applications/
 
 	appdata.files = resources/unix/focuswriter.appdata.xml
-	appdata.path = $$DATADIR/appdata/
+	appdata.path = $$DATADIR/metainfo/
 
 	man.files = resources/unix/focuswriter.1
 	man.path = $$PREFIX/share/man/man1
 
-	qm.files = translations/*.qm
+	qm.files = $$replace(TRANSLATIONS, .ts, .qm)
 	qm.path = $$DATADIR/focuswriter/translations
 	qm.CONFIG += no_check_exist
 
@@ -292,8 +337,8 @@ macx {
 	themes.files = resources/themes/*
 	themes.path = $$DATADIR/focuswriter/themes
 
-	symbols.files = resources/symbols/symbols900.dat
+	symbols.files = resources/symbols/symbols1300.dat
 	symbols.path = $$DATADIR/focuswriter
 
-	INSTALLS += target icon pixmap desktop appdata man icons qm sounds symbols themes
+	INSTALLS += target icon desktop appdata man icons qm sounds symbols themes
 }

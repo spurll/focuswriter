@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2013 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2013-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,13 @@
 #define DICTIONARY_REF_H
 
 #include "abstract_dictionary.h"
+#include "word_ref.h"
 class DictionaryManager;
-
-#include <QStringList>
-#include <QStringRef>
 
 class DictionaryRef
 {
 public:
-	QStringRef check(const QString& string, int start_at) const
+	WordRef check(const QString& string, int start_at) const
 	{
 		return (*d)->check(string, start_at);
 	}

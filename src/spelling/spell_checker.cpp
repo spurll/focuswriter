@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2012, 2013, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,33 +138,33 @@ SpellChecker::SpellChecker(QTextEdit* document, DictionaryRef& dictionary) :
 	// Create widgets
 	m_context = new QTextEdit(this);
 	m_context->setReadOnly(true);
-	m_context->setTabStopWidth(50);
+	m_context->setTabStopDistance(50);
 	QPushButton* add_button = new QPushButton(tr("&Add"), this);
 	add_button->setAutoDefault(false);
-	connect(add_button, SIGNAL(clicked()), this, SLOT(add()));
+	connect(add_button, &QPushButton::clicked, this, &SpellChecker::add);
 	QPushButton* ignore_button = new QPushButton(tr("&Ignore"), this);
 	ignore_button->setAutoDefault(false);
-	connect(ignore_button, SIGNAL(clicked()), this, SLOT(ignore()));
+	connect(ignore_button, &QPushButton::clicked, this, &SpellChecker::ignore);
 	QPushButton* ignore_all_button = new QPushButton(tr("I&gnore All"), this);
 	ignore_all_button->setAutoDefault(false);
-	connect(ignore_all_button, SIGNAL(clicked()), this, SLOT(ignoreAll()));
+	connect(ignore_all_button, &QPushButton::clicked, this, &SpellChecker::ignoreAll);
 
 	m_suggestion = new QLineEdit(this);
 	QPushButton* change_button = new QPushButton(tr("&Change"), this);
 	change_button->setAutoDefault(false);
-	connect(change_button, SIGNAL(clicked()), this, SLOT(change()));
+	connect(change_button, &QPushButton::clicked, this, &SpellChecker::change);
 	QPushButton* change_all_button = new QPushButton(tr("C&hange All"), this);
 	change_all_button->setAutoDefault(false);
-	connect(change_all_button, SIGNAL(clicked()), this, SLOT(changeAll()));
+	connect(change_all_button, &QPushButton::clicked, this, &SpellChecker::changeAll);
 	m_suggestions = new QListWidget(this);
-	connect(m_suggestions, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)), this, SLOT(suggestionChanged(QListWidgetItem*)));
+	connect(m_suggestions, &QListWidget::currentItemChanged, this, &SpellChecker::suggestionChanged);
 
 	QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
-	connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(buttons, &QDialogButtonBox::rejected, this, &SpellChecker::reject);
 
 	// Lay out dialog
 	QGridLayout* layout = new QGridLayout(this);
-	layout->setMargin(12);
+	layout->setContentsMargins(12, 12, 12, 12);
 	layout->setSpacing(6);
 	layout->setColumnMinimumWidth(2, 6);
 
@@ -208,7 +208,7 @@ void SpellChecker::check()
 
 		// Check current line
 		QTextBlock block = m_cursor.block();
-		QStringRef word =  m_dictionary.check(block.text(), m_cursor.position() - block.position());
+		auto word = m_dictionary.check(block.text(), m_cursor.position() - block.position());
 		if (word.isNull()) {
 			if (block.next().isValid()) {
 				m_cursor.movePosition(QTextCursor::NextBlock);

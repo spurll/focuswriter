@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QPushButton>
+#include <QRegularExpression>
 #include <QScrollBar>
 #include <QSettings>
 #include <QStandardPaths>
@@ -164,7 +165,11 @@ namespace
 			mime->setData(QLatin1String("application/rtf"), buffer.data());
 		}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+		mime->setData(QLatin1String("text/html"), doc.toHtml().toUtf8());
+#else
 		mime->setData(QLatin1String("text/html"), doc.toHtml("utf-8").toUtf8());
+#endif
 		mime->setText(doc.toPlainText());
 
 		return mime;
@@ -177,8 +182,12 @@ namespace
 		}
 
 		QTextDocument document;
+		QTextCursor cursor(&document);
+		cursor.mergeBlockFormat(textCursor().blockFormat());
 		int formats = document.allFormats().size();
-		QTextCursor cursor = m_document->isRichText() ? textCursor() : QTextCursor(&document);
+		if (m_document->isRichText()) {
+			cursor = textCursor();
+		}
 
 		QByteArray richtext;
 		if (source->hasFormat(QLatin1String("application/vnd.oasis.opendocument.text"))) {
@@ -331,7 +340,7 @@ Document::Document(const QString& filename, DailyProgress* daily_progress, QWidg
 	m_hide_timer = new QTimer(this);
 	m_hide_timer->setInterval(5000);
 	m_hide_timer->setSingleShot(true);
-	connect(m_hide_timer, SIGNAL(timeout()), this, SLOT(hideMouse()));
+	connect(m_hide_timer, &QTimer::timeout, this, &Document::hideMouse);
 
 	// Set up text area
 	m_text = new TextEdit(this);
@@ -340,31 +349,31 @@ Document::Document(const QString& filename, DailyProgress* daily_progress, QWidg
 	m_text->setFrameStyle(QFrame::NoFrame);
 	m_text->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	m_text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	m_text->setTabStopWidth(48);
+	m_text->setTabStopDistance(48);
 	m_text->document()->setIndentWidth(48);
 	m_text->horizontalScrollBar()->setAttribute(Qt::WA_NoMousePropagation);
 	m_text->viewport()->setMouseTracking(true);
 	m_text->viewport()->installEventFilter(this);
-	connect(m_text, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
-	connect(m_text, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
-	connect(m_text->document(), SIGNAL(modificationChanged(bool)), this, SIGNAL(modificationChanged(bool)));
+	connect(m_text, &QTextEdit::cursorPositionChanged, this, &Document::cursorPositionChanged);
+	connect(m_text, &QTextEdit::selectionChanged, this, &Document::selectionChanged);
+	connect(m_text->document(), &QTextDocument::modificationChanged, this, &Document::modificationChanged);
 
 	QShortcut* shortcut_down = new QShortcut(m_text);
 	QShortcut* shortcut_up = new QShortcut(m_text);
 #ifndef Q_OS_MAC
-	shortcut_down->setKey(Qt::CTRL + Qt::Key_Down);
-	shortcut_up->setKey(Qt::CTRL + Qt::Key_Up);
+	shortcut_down->setKey(Qt::CTRL | Qt::Key_Down);
+	shortcut_up->setKey(Qt::CTRL | Qt::Key_Up);
 #else
-	shortcut_down->setKey(Qt::ALT + Qt::Key_Down);
-	shortcut_up->setKey(Qt::ALT + Qt::Key_Up);
+	shortcut_down->setKey(Qt::ALT | Qt::Key_Down);
+	shortcut_up->setKey(Qt::ALT | Qt::Key_Up);
 #endif
-	connect(shortcut_down, SIGNAL(activated()), this, SLOT(moveToBlockEnd()));
-	connect(shortcut_up, SIGNAL(activated()), this, SLOT(moveToBlockStart()));
+	connect(shortcut_down, &QShortcut::activated, this, &Document::moveToBlockEnd);
+	connect(shortcut_up, &QShortcut::activated, this, &Document::moveToBlockStart);
 
 	m_scene_model = new SceneModel(m_text, this);
 
 	m_highlighter = new Highlighter(m_text, m_dictionary);
-	connect(&DictionaryManager::instance(), SIGNAL(changed()), this, SLOT(dictionaryChanged()));
+	connect(&DictionaryManager::instance(), &DictionaryManager::changed, this, &Document::dictionaryChanged);
 
 	// Set filename
 	if (!filename.isEmpty()) {
@@ -385,15 +394,15 @@ Document::Document(const QString& filename, DailyProgress* daily_progress, QWidg
 	m_scrollbar->setMouseTracking(true);
 	m_scrollbar->installEventFilter(this);
 	setScrollBarVisible(Preferences::instance().alwaysShowScrollBar());
-	connect(m_scrollbar, SIGNAL(actionTriggered(int)), this, SLOT(scrollBarActionTriggered(int)));
-	connect(m_scrollbar, SIGNAL(rangeChanged(int,int)), this, SLOT(scrollBarRangeChanged(int,int)));
+	connect(m_scrollbar, &QScrollBar::actionTriggered, this, &Document::scrollBarActionTriggered);
+	connect(m_scrollbar, &QScrollBar::rangeChanged, this, &Document::scrollBarRangeChanged);
 
 	// Lay out window
 	m_layout = new QGridLayout(this);
 	m_layout->setSpacing(0);
-	m_layout->setMargin(0);
+	m_layout->setContentsMargins(0, 0, 0, 0);
 	m_layout->addWidget(m_text, 1, 1);
-	m_layout->addWidget(m_scrollbar, 1, 2, Qt::AlignRight);
+	m_layout->addWidget(m_scrollbar, 1, 1, 1, 2, Qt::AlignRight);
 
 	// Load settings
 	loadPreferences();
@@ -599,8 +608,8 @@ void Document::reload(bool prompt)
 	// Reload file
 	emit loadStarted(Window::tr("Opening %1").arg(QDir::toNativeSeparators(m_filename)));
 	m_text->setReadOnly(true);
-	disconnect(m_text->document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(updateWordCount(int,int,int)));
-	disconnect(m_text->document(), SIGNAL(undoCommandAdded()), this, SLOT(undoCommandAdded()));
+	disconnect(m_text->document(), &QTextDocument::contentsChange, this, &Document::updateWordCount);
+	disconnect(m_text->document(), &QTextDocument::undoCommandAdded, this, &Document::undoCommandAdded);
 	m_daily_progress->increaseWordCount(-wordCountDelta());
 	loadFile(m_filename, -1);
 	emit loadFinished();
@@ -648,7 +657,7 @@ static void printPage(int index, QPainter *painter, const QTextDocument *doc, co
 		painter->setFont(QFont(doc->defaultFont()));
 		const QString pageString = QString::number(index);
 
-		painter->drawText(qRound(pageNumberPos.x() - painter->fontMetrics().width(pageString)),
+		painter->drawText(qRound(pageNumberPos.x() - painter->fontMetrics().boundingRect(pageString).width()),
 			qRound(pageNumberPos.y() + view.top()),
 			pageString);
 	}
@@ -728,8 +737,9 @@ void Document::print(QPrinter* printer)
 
 	// Apply spacings
 	const int tab_width = (document->indentWidth() / 96.0) * printer->resolution();
+	const bool indent_first_line = !qFuzzyIsNull(document->begin().blockFormat().textIndent());
 	QTextBlockFormat block_format;
-	block_format.setTextIndent(tab_width);
+	block_format.setTextIndent(tab_width * indent_first_line);
 	for (int i = 0, count = document->allFormats().count(); i < count; ++i) {
 		QTextFormat& f = document->allFormats()[i];
 		if (f.isBlockFormat()) {
@@ -775,8 +785,8 @@ bool Document::loadFile(const QString& filename, int position)
 		scrollBarRangeChanged(m_scrollbar->minimum(), m_scrollbar->maximum());
 
 		calculateWordCount();
-		connect(m_text->document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(updateWordCount(int,int,int)));
-		connect(m_text->document(), SIGNAL(undoCommandAdded()), this, SLOT(undoCommandAdded()));
+		connect(m_text->document(), &QTextDocument::contentsChange, this, &Document::updateWordCount);
+		connect(m_text->document(), &QTextDocument::undoCommandAdded, this, &Document::undoCommandAdded);
 
 		return loaded;
 	}
@@ -844,9 +854,11 @@ bool Document::loadFile(const QString& filename, int position)
 	m_saved_wordcount = m_document_stats.wordCount();
 	if (enabled) {
 		m_highlighter->setEnabled(true);
+	} else {
+		m_highlighter->rehighlight();
 	}
-	connect(m_text->document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(updateWordCount(int,int,int)));
-	connect(m_text->document(), SIGNAL(undoCommandAdded()), this, SLOT(undoCommandAdded()));
+	connect(m_text->document(), &QTextDocument::contentsChange, this, &Document::updateWordCount);
+	connect(m_text->document(), &QTextDocument::undoCommandAdded, this, &Document::undoCommandAdded);
 
 	if (m_focus_mode) {
 		focusText();
@@ -900,7 +912,8 @@ void Document::loadTheme(const Theme& theme)
 		m_text->document()->setModified(false);
 		m_spacings_loaded = true;
 	}
-	m_text->setTabStopWidth(tab_width);
+
+	m_text->setTabStopDistance(tab_width);
 	m_text->document()->setIndentWidth(tab_width);
 
 	// Update text
@@ -936,6 +949,7 @@ void Document::loadTheme(const Theme& theme)
 		// Stretched
 		m_layout->setColumnStretch(0, 0);
 		m_layout->setColumnStretch(2, 0);
+		break;
 	case 1:
 	default:
 		// Centered
@@ -1002,14 +1016,14 @@ void Document::setFocusMode(int focus_mode)
 	m_text->setPalette(p);
 
 	if (m_focus_mode) {
-		connect(m_text, SIGNAL(cursorPositionChanged()), this, SLOT(focusText()));
-		connect(m_text, SIGNAL(selectionChanged()), this, SLOT(focusText()));
-		connect(m_text, SIGNAL(textChanged()), this, SLOT(focusText()));
+		connect(m_text, &QTextEdit::cursorPositionChanged, this, &Document::focusText);
+		connect(m_text, &QTextEdit::selectionChanged, this, &Document::focusText);
+		connect(m_text, &QTextEdit::textChanged, this, &Document::focusText);
 		focusText();
 	} else {
-		disconnect(m_text, SIGNAL(cursorPositionChanged()), this, SLOT(focusText()));
-		disconnect(m_text, SIGNAL(selectionChanged()), this, SLOT(focusText()));
-		disconnect(m_text, SIGNAL(textChanged()), this, SLOT(focusText()));
+		disconnect(m_text, &QTextEdit::cursorPositionChanged, this, &Document::focusText);
+		disconnect(m_text, &QTextEdit::selectionChanged, this, &Document::focusText);
+		disconnect(m_text, &QTextEdit::textChanged, this, &Document::focusText);
 		m_text->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 	}
 }
@@ -1098,7 +1112,13 @@ void Document::mouseMoveEvent(QMouseEvent* event)
 	unsetCursor();
 	m_hide_timer->start();
 
-	const QPoint& point = mapFromGlobal(event->globalPos());
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+	const QPoint global = event->globalPosition().toPoint();
+#else
+	const QPoint global = event->globalPos();
+#endif
+
+	const QPoint point = mapFromGlobal(global);
 	if (rect().contains(point)) {
 		emit headerVisible(false);
 		emit footerVisible(false);
@@ -1107,7 +1127,7 @@ void Document::mouseMoveEvent(QMouseEvent* event)
 		int sidebar_region = std::min(m_scene_list->width(), m_layout->cellRect(0,0).width());
 		emit scenesVisible(QRect(0,0, sidebar_region, height()).contains(point));
 	}
-	setScrollBarVisible(m_scrollbar->rect().contains(m_scrollbar->mapFromGlobal(event->globalPos())));
+	setScrollBarVisible(m_scrollbar->rect().contains(m_scrollbar->mapFromGlobal(global)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1135,7 +1155,7 @@ void Document::mousePressEvent(QMouseEvent* event)
 
 void Document::wheelEvent(QWheelEvent* event)
 {
-	if (event->orientation() == Qt::Vertical) {
+	if (event->angleDelta().y() != 0) {
 		QApplication::sendEvent(m_scrollbar, event);
 	} else {
 		QApplication::sendEvent(m_text->horizontalScrollBar(), event);
@@ -1274,7 +1294,13 @@ void Document::selectionChanged()
 	m_selected_stats.clear();
 	if (m_text->textCursor().hasSelection()) {
 		BlockStats temp(0);
-		QStringList selection = m_text->textCursor().selectedText().split(QChar::ParagraphSeparator, QString::SkipEmptyParts);
+		QStringList selection = m_text->textCursor().selectedText().split(QChar::ParagraphSeparator,
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+			Qt::SkipEmptyParts
+#else
+			QString::SkipEmptyParts
+#endif
+		);
 		for (const QString& string : selection) {
 			temp.update(string);
 			m_selected_stats.append(&temp);
@@ -1443,27 +1469,24 @@ QString Document::getSaveFileName(const QString& title)
 	QString filename;
 	while (filename.isEmpty()) {
 		QString selected;
-		filename = QFileDialog::getSaveFileName(window(), title, path, filter, &selected, QFileDialog::DontResolveSymlinks);
+		filename = QFileDialog::getSaveFileName(window(), title, path, filter, &selected);
 		if (filename.isEmpty()) {
 			break;
 		}
 
 		// Append file extension
-		QString type;
-		QRegExp exp("\\*(\\.\\w+)");
-		bool append_extension = false;
+		QRegularExpression regex("\\*(\\.\\w+)");
+		QRegularExpressionMatchIterator i = regex.globalMatch(selected);
+		bool append_extension = i.hasNext();
 		QStringList types;
-		int index = selected.indexOf(QLatin1Char('(')) + 1;
-		while ((index = exp.indexIn(selected, index)) != -1) {
-			type = exp.cap(1);
+		while (i.hasNext()) {
+			QString type = i.next().captured(1);
+			types << type;
+
 			if (filename.endsWith(type)) {
 				append_extension = false;
 				break;
 			}
-
-			append_extension = true;
-			types.append(type);
-			index += types.last().length();
 		}
 		if (append_extension) {
 			filename.append(types.first());

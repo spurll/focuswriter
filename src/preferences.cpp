@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ Preferences::Preferences() :
 	m_goal_words(100, 100000),
 	m_goal_streak_minimum(1, 100),
 	m_page_type(0, 2),
-	m_page_characters(500, 10000),
+	m_page_characters(1, 10000),
 	m_page_paragraphs(1, 100),
-	m_page_words(100, 2000),
+	m_page_words(1, 2000),
 	m_wordcount_type(0, 2),
 	m_save_format(FormatManager::types())
 {
@@ -391,13 +391,6 @@ void Preferences::setSceneDivider(const QString& divider)
 
 //-----------------------------------------------------------------------------
 
-bool Preferences::autoSave() const
-{
-	return m_auto_save;
-}
-
-//-----------------------------------------------------------------------------
-
 bool Preferences::savePositions() const
 {
 	return m_save_positions;
@@ -415,13 +408,6 @@ bool Preferences::writeByteOrderMark() const
 RangedString Preferences::saveFormat() const
 {
 	return m_save_format;
-}
-
-//-----------------------------------------------------------------------------
-
-void Preferences::setAutoSave(bool save)
-{
-	setValue(m_auto_save, save);
 }
 
 //-----------------------------------------------------------------------------
@@ -617,7 +603,6 @@ void Preferences::reload()
 	m_scene_divider = settings.value("SceneList/Divider", QLatin1String("##")).toString();
 	SceneModel::setSceneDivider(m_scene_divider);
 
-	m_auto_save = settings.value("Save/Auto", false).toBool();
 	m_save_positions = settings.value("Save/RememberPositions", true).toBool();
 	m_write_bom = settings.value("Save/WriteBOM", true).toBool();
 	m_save_format = settings.value("Save/DefaultFormat", "odt").toString();
@@ -676,7 +661,6 @@ void Preferences::write()
 
 	settings.setValue("SceneList/Divider", m_scene_divider);
 
-	settings.setValue("Save/Auto", m_auto_save);
 	settings.setValue("Save/RememberPositions", m_save_positions);
 	settings.setValue("Save/WriteBOM", m_write_bom);
 	settings.setValue("Save/DefaultFormat", m_save_format.value());

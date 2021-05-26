@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2019 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ public slots:
 	void alignLeft();
 	void alignRight();
 	void autoCache();
-	void autoSave();
 	void checkSpelling();
 	void cut();
 	void copy();
@@ -118,7 +117,7 @@ public slots:
 	void updateSmartQuotes();
 	void updateSmartQuotesSelection();
 	void setFooterVisible(bool visible);
-	void setHeaderVisible(bool visible = true);
+	void setHeaderVisible(bool visible);
 	void setScenesVisible(bool visible);
 	void showHeader();
 
@@ -137,9 +136,7 @@ private slots:
 	void updateMenuIndexes();
 
 private:
-#if (QT_VERSION < QT_VERSION_CHECK(5,6,0))
-	qreal devicePixelRatioF() const { return devicePixelRatio(); }
-#endif
+	void initPrinter();
 
 private:
 	AlertLayer* m_alerts;

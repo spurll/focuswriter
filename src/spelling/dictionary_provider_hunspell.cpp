@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
 #include "abstract_dictionary.h"
 #include "dictionary_manager.h"
 #include "smart_quotes.h"
+#include "word_ref.h"
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QListIterator>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStandardPaths>
-#include <QStringList>
 #include <QTextCodec>
 
 #include <hunspell.hxx>
@@ -55,7 +55,7 @@ public:
 		return m_dictionary;
 	}
 
-	QStringRef check(const QString& string, int start_at) const;
+	WordRef check(const QString& string, int start_at) const;
 	QStringList suggestions(const QString& word) const;
 
 	void addToPersonal(const QString& word);
@@ -111,7 +111,7 @@ DictionaryHunspell::~DictionaryHunspell()
 
 //-----------------------------------------------------------------------------
 
-QStringRef DictionaryHunspell::check(const QString& string, int start_at) const
+WordRef DictionaryHunspell::check(const QString& string, int start_at) const
 {
 	int index = -1;
 	int length = 0;
@@ -131,7 +131,8 @@ QStringRef DictionaryHunspell::check(const QString& string, int start_at) const
 				goto Letter;
 			case QChar::Letter_Lowercase:
 				is_uppercase = false;
-				Letter:
+				goto Letter;
+			Letter:
 			case QChar::Letter_Uppercase:
 			case QChar::Letter_Titlecase:
 			case QChar::Letter_Modifier:
@@ -150,11 +151,13 @@ QStringRef DictionaryHunspell::check(const QString& string, int start_at) const
 
 			case QChar::Punctuation_FinalQuote:
 			case QChar::Punctuation_Other:
-				if (c == 0x0027 || c == 0x2019) {
+				if (c == '\'' || c == u'’') {
 					chars++;
 					break;
 				}
+				goto NotWord;
 
+			NotWord:
 			default:
 				if (index != -1) {
 					is_word = true;
@@ -164,11 +167,14 @@ QStringRef DictionaryHunspell::check(const QString& string, int start_at) const
 
 		if (is_word || (i == count && index != -1)) {
 			if (!is_uppercase && !is_number) {
-				QStringRef check(&string, index, length);
-				QString word = check.toString();
+				auto word = string.mid(index, length);
 				word.replace(QChar(0x2019), QLatin1Char('\''));
+#ifdef H_DEPRECATED
+				if (!m_dictionary->spell(m_codec->fromUnicode(word).toStdString())) {
+#else
 				if (!m_dictionary->spell(m_codec->fromUnicode(word).constData())) {
-					return check;
+#endif
+					return WordRef(index, length);
 				}
 			}
 			index = -1;
@@ -178,7 +184,7 @@ QStringRef DictionaryHunspell::check(const QString& string, int start_at) const
 		}
 	}
 
-	return QStringRef();
+	return WordRef();
 }
 
 //-----------------------------------------------------------------------------
@@ -188,6 +194,16 @@ QStringList DictionaryHunspell::suggestions(const QString& word) const
 	QStringList result;
 	QString check = word;
 	check.replace(QChar(0x2019), QLatin1Char('\''));
+#ifdef H_DEPRECATED
+	const auto suggestions = m_dictionary->suggest(m_codec->fromUnicode(check).toStdString());
+	for (const auto& suggestion : suggestions) {
+		QString word = m_codec->toUnicode(suggestion.c_str());
+		if (SmartQuotes::isEnabled()) {
+			SmartQuotes::replace(word);
+		}
+		result.append(word);
+	}
+#else
 	char** suggestions = 0;
 	int count = m_dictionary->suggest(&suggestions, m_codec->fromUnicode(check).constData());
 	if (suggestions != 0) {
@@ -200,6 +216,7 @@ QStringList DictionaryHunspell::suggestions(const QString& word) const
 		}
 		m_dictionary->free_list(&suggestions, count);
 	}
+#endif
 	return result;
 }
 
@@ -254,9 +271,9 @@ QStringList DictionaryProviderHunspell::availableDictionaries() const
 		QDir dir(i.next());
 
 		QStringList dic_files = dir.entryList(QStringList() << "*.dic*", QDir::Files, QDir::Name | QDir::IgnoreCase);
-		dic_files.replaceInStrings(QRegExp("\\.dic.*"), "");
+		dic_files.replaceInStrings(QRegularExpression("\\.dic.*"), "");
 		QStringList aff_files = dir.entryList(QStringList() << "*.aff*", QDir::Files);
-		aff_files.replaceInStrings(QRegExp("\\.aff.*"), "");
+		aff_files.replaceInStrings(QRegularExpression("\\.aff.*"), "");
 
 		for (const QString& language : dic_files) {
 			if (aff_files.contains(language) && !result.contains(language)) {

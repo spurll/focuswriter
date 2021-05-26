@@ -30,36 +30,36 @@
 <context>
     <name>DailyProgress</name>
     <message numerus="yes">
-        <source>%1% of %Ln minute(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%1% of %Ln word(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <source>%Ln word(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln paraula</numerusform>
+            <numerusform>%Ln paraules</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%Ln minute(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln minut</numerusform>
+            <numerusform>%Ln minuts</numerusform>
         </translation>
     </message>
     <message>
         <source>0%</source>
         <translation>0%</translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln minute(s)</source>
+        <translation>
+            <numerusform>%L1% de %Ln minut</numerusform>
+            <numerusform>%L1% de %Ln minuts</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln word(s)</source>
+        <translation>
+            <numerusform>%L1% de %Ln paraula</numerusform>
+            <numerusform>%L1% de %Ln paraules</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -82,9 +82,9 @@
     </message>
     <message numerus="yes">
         <source>%n day(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n dia</numerusform>
+            <numerusform>%n dies</numerusform>
         </translation>
     </message>
     <message>
@@ -95,8 +95,8 @@
 <context>
     <name>DailyProgressLabel</name>
     <message>
-        <source>%1% of daily goal</source>
-        <translation>%1% de l&apos;objectiu del dia</translation>
+        <source>%L1% of daily goal</source>
+        <translation>%L1% de l&apos;objectiu del dia</translation>
     </message>
 </context>
 <context>
@@ -285,11 +285,7 @@
     <name>FormatManager</name>
     <message>
         <source>OpenDocument Text</source>
-        <translation>OpenDocument Text</translation>
-    </message>
-    <message>
-        <source>OpenDocument Flat XML</source>
-        <translation type="unfinished"></translation>
+        <translation>Text d&apos;OpenDocument</translation>
     </message>
     <message>
         <source>Office Open XML</source>
@@ -297,11 +293,11 @@
     </message>
     <message>
         <source>Rich Text Format</source>
-        <translation>Rich Text Format</translation>
+        <translation>Format de text enriquit</translation>
     </message>
     <message>
         <source>Plain Text</source>
-        <translation>Text pla</translation>
+        <translation>Text senzill</translation>
     </message>
     <message>
         <source>All Files</source>
@@ -309,7 +305,11 @@
     </message>
     <message>
         <source>All Supported Files</source>
-        <translation>Tots els fitxers suportats</translation>
+        <translation>Tots els fitxers compatibles</translation>
+    </message>
+    <message>
+        <source>OpenDocument Flat XML</source>
+        <translation>XML pla d&apos;OpenDocument</translation>
     </message>
 </context>
 <context>
@@ -479,10 +479,6 @@
         <translation>S&apos;està desant</translation>
     </message>
     <message>
-        <source>Automatically save changes</source>
-        <translation>Desa els canvis automàticament</translation>
-    </message>
-    <message>
         <source>Remember cursor position</source>
         <translation>Recorda la posició del cursor</translation>
     </message>
@@ -519,32 +515,12 @@
         <translation>Voleu reiniciar a zero el progrés diari d&apos;avui?</translation>
     </message>
     <message>
-        <source>Remove current dictionary?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Write byte order mark in plain text files</source>
         <translation>Escriu la marca d&apos;ordre dels bits en els arxius de text pla</translation>
     </message>
     <message>
         <source>Default format:</source>
         <translation>Format per defecte:</translation>
-    </message>
-    <message>
-        <source>User Interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show scrollbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show top bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show bottom bar</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Reset Today</source>
@@ -661,6 +637,26 @@
     <message>
         <source>Personal Dictionary</source>
         <translation>Diccionari personal</translation>
+    </message>
+    <message>
+        <source>Remove current dictionary?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always show scrollbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always show top bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always show bottom bar</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1118,14 +1114,6 @@
         <translation type="unfinished">Per defecte</translation>
     </message>
     <message>
-        <source>Bitter Skies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enchantment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Gentle Blues</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1135,14 +1123,6 @@
     </message>
     <message>
         <source>Space Dreams</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spy Games</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tranquility</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1196,6 +1176,22 @@
     <message>
         <source>Export Theme</source>
         <translation>Exporta Tema</translation>
+    </message>
+    <message>
+        <source>Bitter Skies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enchantment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spy Games</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tranquility</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1502,10 +1498,6 @@
         <translation>Im&amp;primeix</translation>
     </message>
     <message>
-        <source>Pa&amp;ge Setup...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>Tan&amp;ca</translation>
     </message>
@@ -1564,38 +1556,6 @@
     <message>
         <source>Fo&amp;rmat</source>
         <translation>Fo&amp;rmat</translation>
-    </message>
-    <message>
-        <source>&amp;Heading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Heading &amp;6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Normal</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Bold</source>
@@ -1722,16 +1682,8 @@
         <translation>Actualitza el document</translation>
     </message>
     <message>
-        <source>Update Document Smart Quotes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Update &amp;Selection</source>
         <translation>Actualitza la selecció</translation>
-    </message>
-    <message>
-        <source>Update Selection Smart Quotes</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Spelling...</source>
@@ -1822,10 +1774,6 @@
         <translation>Focalitza un paràgraf</translation>
     </message>
     <message>
-        <source>Ctrl+Shift+`</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Help</source>
         <translation>Ajuda</translation>
     </message>
@@ -1856,6 +1804,54 @@
     <message>
         <source>About &amp;Qt</source>
         <translation>Sobre &amp;Qt</translation>
+    </message>
+    <message>
+        <source>Pa&amp;ge Setup...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Heading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading &amp;6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Document Smart Quotes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Selection Smart Quotes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+`</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

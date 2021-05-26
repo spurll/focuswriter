@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2013, 2014, 2016, 2017, 2019 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLocale>
 #include <QPainter>
 #include <QPixmap>
 #include <QScrollBar>
@@ -71,13 +72,8 @@ public:
 			if (progress == 0) {
 				opt.backgroundBrush = opt.palette.alternateBase();
 			} else if (progress == 100) {
-#if (QT_VERSION >= QT_VERSION_CHECK(5,6,0))
 				const qreal pixelratio = painter->device()->devicePixelRatioF();
-#else
-				const qreal pixelratio = painter->device()->devicePixelRatio();
-#endif
 				painter->drawPixmap(QPointF(opt.rect.topLeft()), fetchStarBackground(opt, pixelratio));
-				opt.backgroundBrush = Qt::transparent;
 				opt.font.setBold(true);
 			} else {
 				qreal k = (progress * 0.009) + 0.1;
@@ -160,7 +156,7 @@ DailyProgressDialog::DailyProgressDialog(DailyProgress* progress, QWidget* paren
 	m_display->verticalHeader()->hide();
 	m_display->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	m_display->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	connect(progress, SIGNAL(modelReset()), this, SLOT(modelReset()));
+	connect(progress, &DailyProgress::modelReset, this, &DailyProgressDialog::modelReset);
 
 	m_delegate = new Delegate(this);
 	m_display->setItemDelegate(m_delegate);
@@ -208,12 +204,12 @@ DailyProgressDialog::DailyProgressDialog(DailyProgress* progress, QWidget* paren
 	m_current_streak = new QLabel(m_streaks);
 
 	QHBoxLayout* streaks_layout = new QHBoxLayout(m_streaks);
-	streaks_layout->setMargin(0);
+	streaks_layout->setContentsMargins(0, 0, 0, 0);
 	streaks_layout->addWidget(m_longest_streak);
 	streaks_layout->addWidget(streak_divider);
 	streaks_layout->addWidget(m_current_streak);
 
-	connect(m_progress, SIGNAL(streaksChanged()), this, SLOT(streaksChanged()));
+	connect(m_progress, &DailyProgress::streaksChanged, this, &DailyProgressDialog::streaksChanged);
 	streaksChanged();
 
 	// Lay out dialog
@@ -287,9 +283,11 @@ void DailyProgressDialog::streaksChanged()
 
 	m_progress->findLongestStreak(streak_start, streak_end);
 	m_longest_streak->setText(createStreakText(tr("Longest streak"), streak_start, streak_end));
+	m_longest_streak->setEnabled(streak_end.isValid());
 
 	m_progress->findCurrentStreak(streak_start, streak_end);
 	m_current_streak->setText(createStreakText(tr("Current streak"), streak_start, streak_end));
+	m_current_streak->setEnabled(streak_end == QDate::currentDate());
 }
 
 //-----------------------------------------------------------------------------
@@ -299,8 +297,9 @@ QString DailyProgressDialog::createStreakText(const QString& title, const QDate&
 	int length = start.isValid() ? (start.daysTo(end) + 1) : 0;
 	QString start_str, end_str;
 	if (length > 0) {
-		start_str = start.toString(Qt::DefaultLocaleShortDate);
-		end_str = end.toString(Qt::DefaultLocaleShortDate);
+		const QLocale locale;
+		start_str = locale.toString(start, QLocale::ShortFormat);
+		end_str = locale.toString(end, QLocale::ShortFormat);
 	} else {
 		start_str = end_str = tr("N/A");
 	}

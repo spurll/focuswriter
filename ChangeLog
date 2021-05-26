@@ -1,3 +1,147 @@
+1.7.6
+-----
+* FIXED: Did not load locales with underscores.
+* FIXED: Compile failure due to missing header.
+* Translation updates: Slovenian, Swedish, Turkish.
+
+1.7.5
+-----
+* Updated Windows dictionaries.
+* Updated Windows deployment.
+* Translation updates: Ukrainian.
+
+1.7.4
+-----
+* FIXED: Broken emergency cache in Windows.
+* FIXED: Daily progress did not show star background with some themes.
+* Replaced deprecated code.
+* Translation updates: Catalan, Swedish.
+
+1.7.3
+-----
+* FIXED: Was not loading KDE icon theme.
+* FIXED: Headings menu was incorrectly shown in German.
+* Replaced deprecated code.
+* Translation updates: Friulian, German, Korean.
+
+1.7.2
+-----
+* FIXED: Minimum sizes for page counts were too high.
+* FIXED: Window icon didn't work in Wayland.
+* Require Qt 5.9.
+* Improved loading locales.
+* Translation updates: Friulian, Korean.
+
+1.7.1
+-----
+* FIXED: Did not launch when incorrect lock file was found.
+
+1.7.0
+-----
+* FIXED: Daily progress percentages were not locale aware.
+* FIXED: Scene list text was incorrect with Qt 5.12
+* Show current streak for previous day.
+* Improved detection of running instance.
+* Updated included hunspell.
+* Updated dictionaries.
+* Translation updates: Czech, Dutch, Hungarian.
+
+1.6.16
+------
+* FIXED: Could not always save to remote drives.
+* FIXED: Could not browse shortcuts in Windows file dialogs.
+
+1.6.15
+------
+* FIXED: Automatic high dpi support.
+* Translation updates: Galician, Spanish.
+
+1.6.14
+------
+* FIXED: Regression where emergency cache didn't run.
+* Renamed NEWS to ChangeLog.
+* Translation updates: Bosnian.
+
+1.6.13
+------
+* Updated dictionaries.
+* Updated Unicode symbols database.
+* Replaced deprecated code.
+* Extra warnings only shown in debug build.
+* Improved Linux deployment.
+* Improved macOS deployment.
+* Improved Windows deployment.
+* Translation updates: Dutch, French, Portuguese.
+
+1.6.12
+------
+* Ignore empty cache files.
+* Remove auto save.
+* Translation updates: Slovenian.
+
+1.6.11
+------
+* FIXED: File monitoring prevented saving in Windows.
+* Translation updates: Danish, Slovenian.
+
+1.6.10
+-----
+* Default to Flat ODT for cache files.
+* Reduce time between cache writes to 5 minutes.
+* FIXED: Fade effect broke alerts.
+* FIXED: Fade effect hid text on load screen.
+* Translation updates: Greek.
+
+1.6.9
+-----
+* Updated dictionaries.
+* FIXED: Could not save to network devices.
+* Translation updates: Igbo, Slovenian.
+
+1.6.8
+-----
+* FIXED: Could not compile with Qt 5.10.
+* FIXED: Did not handle ODT line position with two values.
+* Translation updates: German, Indonesian.
+
+1.6.7
+-----
+* Updated dictionaries.
+* FIXED: HiDPI blurred text backgrounds were scaled.
+* FIXED: Window margin was always the size of the scrollbar.
+* FIXED: Always indented first line when printing.
+
+1.6.6
+-----
+* FIXED: Did not always install translations in Linux.
+* FIXED: Unneccessary compiler warning about switch fallthrough.
+* FIXED: Did not show headings when automatic spellchecking was disabled.
+* FIXED: Foreground incorrectly placed when load stretched themes.
+* Translation updates: Czech, Armenian.
+
+1.6.5
+-----
+* FIXED: Data loss when program crashed.
+* Updated included hunspell.
+* Updated dictionaries.
+* Translation updates: Greek, Swedish.
+
+1.6.4
+-----
+* Updated AppData installation directory.
+* FIXED: HiDPI blurred text backgrounds were offset and scaled.
+* FIXED: HiDPI backgrounds were not centered properly.
+* FIXED: HiDPI centered backgrounds were also scaled.
+* Translation updates: Chinese (Taiwan), Finnish, German, Indonesian.
+
+1.6.3
+-----
+* Updated included hunspell.
+* FIXED: Line spacing was ignored when pasting in new documents.
+* FIXED: Pasting text always made document rich text.
+* FIXED: Possible delay on start when creating non-native printer.
+* Translation updates: Chinese (China), Japanese, Korean, Lithuanian, Polish, Russian, Ukrainian.
+
 1.6.2
 -----
 * Generate binary translations at build time.

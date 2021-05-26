@@ -11,11 +11,11 @@ cd temp
 
 # Download
 echo -n 'Downloading LibreOffice dictionaries...'
-loversion='5.2.1.2'
+loversion='7.1.3.1'
 lodict="libreoffice-dictionaries-${loversion}"
 lofiles="libreoffice-${loversion}/dictionaries"
 if [ ! -e "${lodict}.tar.xz" ]; then
-	curl -s -O -L "http://download.documentfoundation.org/libreoffice/src/5.2.1/${lodict}.tar.xz"
+	curl -s -O -L "https://download.documentfoundation.org/libreoffice/src/7.1.3/${lodict}.tar.xz"
 	echo ' DONE'
 else
 	echo ' SKIPPED'
@@ -25,17 +25,17 @@ echo -n 'Downloading Armenian dictionary...'
 hydict='hy_am_e_1940_dict-1.1'
 hyfiles='hy_am_e_1940_dict-1.1'
 if [ ! -e "${hydict}.oxt" ]; then
-	curl -s -L -o "${hydict}.oxt" 'http://extensions.openoffice.org/en/download/4838'
+	curl -s -L -o "${hydict}.oxt" 'https://extensions.openoffice.org/en/download/4838'
 	echo ' DONE'
 else
 	echo ' SKIPPED'
 fi
 
 echo -n 'Downloading Esperanto dictionary...'
-eodict='esperantilo'
-eofiles='esperantilo'
+eodict='dict-eo'
+eofiles='dict-eo/dictionaries'
 if [ ! -e "${eodict}.oxt" ]; then
-	curl -s -L -o "${eodict}.oxt" 'http://extensions.openoffice.org/en/download/4561'
+	curl -s -O "https://extensions.libreoffice.org/assets/downloads/z/${eodict}.oxt"
 	echo ' DONE'
 else
 	echo ' SKIPPED'
@@ -43,37 +43,17 @@ fi
 
 echo -n 'Downloading Finnish dictionary...'
 if [ ! -e 'voikko.oxt' ]; then
-	curl -s -O 'http://www.puimula.org/htp/ooo/voikko-win/5.0.0.20151123/voikko.oxt'
+	curl -s -O 'https://www.puimula.org/htp/ooo/voikko-win/5.0.0.20151123/voikko.oxt'
 	echo ' DONE'
 else
 	echo ' SKIPPED'
 fi
 
 echo -n 'Downloading Korean dictionary...'
-kodict='korean_spell-checker-0-5-6-1_libo'
-kofiles='korean_spell-checker-0-5-6-1_libo/dictionaries'
+kodict='korean-spell-checker-0-7-91-libo'
+kofiles='korean-spell-checker-0-7-91-libo/dictionaries'
 if [ ! -e "${kodict}.oxt" ]; then
-	curl -s -O "http://extensions.libreoffice.org/extension-center/korean-spellchecker/releases/0.5.6.1/${kodict}.oxt"
-	echo ' DONE'
-else
-	echo ' SKIPPED'
-fi
-
-echo -n 'Downloading Indonesian dictionary...'
-iddict='id_id'
-idfiles='id_id'
-if [ ! -e "${iddict}.oxt" ]; then
-	curl -s -O "http://extensions.libreoffice.org/extension-center/indonesian-dictionary-kamus-indonesia-by-benitius/releases/2.0/${iddict}.oxt"
-	echo ' DONE'
-else
-	echo ' SKIPPED'
-fi
-
-echo -n 'Downloading Turkish dictionary...'
-trdict='oo-turkish-dict-v1-2'
-trfiles="${trdict}/dictionaries"
-if [ ! -e "${trdict}.oxt" ]; then
-	curl -s -O "http://extensions.libreoffice.org/extension-center/turkish-spellcheck-dictionary/releases/1.2/${trdict}.oxt"
+	curl -s -O "https://extensions.libreoffice.org/assets/downloads/z/${kodict}.oxt"
 	echo ' DONE'
 else
 	echo ' SKIPPED'
@@ -121,22 +101,6 @@ else
 	echo ' SKIPPED'
 fi
 
-echo -n 'Extracting Indonesian dictionary...'
-if [ ! -e "${iddict}" ]; then
-	unzip -qq "${iddict}.oxt" -d "${iddict}"
-	echo ' DONE'
-else
-	echo ' SKIPPED'
-fi
-
-echo -n 'Extracting Turkish dictionary...'
-if [ ! -e "${trdict}" ]; then
-	unzip -qq "${trdict}.oxt" -d "${trdict}"
-	echo ' DONE'
-else
-	echo ' SKIPPED'
-fi
-
 
 # Copy files
 echo -n 'Copying...'
@@ -147,6 +111,9 @@ cp -a $lofiles/af_ZA/af_ZA.dic dicts/af_ZA.dic
 echo -n ' ar'
 cp -a $lofiles/ar/ar.aff dicts/ar.aff
 cp -a $lofiles/ar/ar.dic dicts/ar.dic
+echo -n ' bs'
+cp -a $lofiles/bs_BA/bs_BA.aff dicts/bs.aff
+cp -a $lofiles/bs_BA/bs_BA.dic dicts/bs.dic
 echo -n ' ca'
 cp -a $lofiles/ca/dictionaries/ca.aff dicts/ca.aff
 cp -a $lofiles/ca/dictionaries/ca.dic dicts/ca.dic
@@ -184,17 +151,20 @@ echo -n ' en_ZA'
 cp -a $lofiles/en/en_ZA.aff dicts/en_ZA.aff
 cp -a $lofiles/en/en_ZA.dic dicts/en_ZA.dic
 echo -n ' eo'
-cp -a $eofiles/eo_ilo.aff dicts/eo.aff
-cp -a $eofiles/eo_ilo.dic dicts/eo.dic
+cp -a $eofiles/eo.aff dicts/eo.aff
+cp -a $eofiles/eo.dic dicts/eo.dic
 echo -n ' es'
-cp -a $lofiles/es/es_ANY.aff dicts/es.aff
-cp -a $lofiles/es/es_ANY.dic dicts/es.dic
+cp -a $lofiles/es/es_ES.aff dicts/es.aff
+cp -a $lofiles/es/es_ES.dic dicts/es.dic
 echo -n ' fi'
 cp -a voikko/voikko/2 dicts
-cp -a voikko/voikko/Windows-32bit-WindowsPE/libvoikko-1.dll dicts
+cp -a voikko/voikko/Windows-64bit-WindowsPE/libvoikko-1.dll dicts
 echo -n ' fr'
 cp -a $lofiles/fr_FR/fr.aff dicts/fr.aff
 cp -a $lofiles/fr_FR/fr.dic dicts/fr.dic
+echo -n ' gl'
+cp -a $lofiles/gl/gl_ES.aff dicts/gl.aff
+cp -a $lofiles/gl/gl_ES.dic dicts/gl.dic
 echo -n ' he'
 cp -a $lofiles/he_IL/he_IL.aff dicts/he.aff
 cp -a $lofiles/he_IL/he_IL.dic dicts/he.dic
@@ -205,8 +175,8 @@ echo -n ' hy'
 cp -a $hyfiles/hy_am_e_1940.aff dicts/hy.aff
 cp -a $hyfiles/hy_am_e_1940.dic dicts/hy.dic
 echo -n ' id'
-cp -a $idfiles/id_ID.aff dicts/id.aff
-cp -a $idfiles/id_ID.dic dicts/id.dic
+cp -a $lofiles/id/id_ID.aff dicts/id.aff
+cp -a $lofiles/id/id_ID.dic dicts/id.dic
 echo -n ' it'
 cp -a $lofiles/it_IT/it_IT.aff dicts/it.aff
 cp -a $lofiles/it_IT/it_IT.dic dicts/it.dic
@@ -237,6 +207,9 @@ cp -a $lofiles/ru_RU/ru_RU.dic dicts/ru.dic
 echo -n ' sk'
 cp -a $lofiles/sk_SK/sk_SK.aff dicts/sk.aff
 cp -a $lofiles/sk_SK/sk_SK.dic dicts/sk.dic
+echo -n ' sl'
+cp -a $lofiles/sl_SI/sl_SI.aff dicts/sl.aff
+cp -a $lofiles/sl_SI/sl_SI.dic dicts/sl.dic
 echo -n ' sr'
 cp -a $lofiles/sr/sr.aff dicts/sr.aff
 cp -a $lofiles/sr/sr.dic dicts/sr.dic
@@ -246,8 +219,8 @@ echo -n ' sv'
 cp -a $lofiles/sv_SE/sv_SE.aff dicts/sv.aff
 cp -a $lofiles/sv_SE/sv_SE.dic dicts/sv.dic
 echo -n ' tr'
-cp -a $trfiles/tr-TR.aff dicts/tr.aff
-cp -a $trfiles/tr-TR.dic dicts/tr.dic
+cp -a $lofiles/tr_TR/tr_TR.aff dicts/tr.aff
+cp -a $lofiles/tr_TR/tr_TR.dic dicts/tr.dic
 echo -n ' uk'
 cp -a $lofiles/uk_UA/uk_UA.aff dicts/uk.aff
 cp -a $lofiles/uk_UA/uk_UA.dic dicts/uk.dic

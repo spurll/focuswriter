@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2010, 2011, 2012, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2010, 2011, 2012, 2016, 2018, 2019 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,17 +59,18 @@ LoadScreen::LoadScreen(QWidget* parent) :
 	m_text->setStyleSheet("QLabel {color: #d7d7d7; background-color: #1e1e1e; border-top-left-radius: 0.25em; border-top-right-radius: 0.25em; padding: 0.25em 0.5em;}");
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addStretch();
 	layout->addWidget(m_text, 0, Qt::AlignCenter);
 
 	m_hide_effect = new QGraphicsOpacityEffect(this);
 	m_hide_effect->setOpacity(1.0);
 	setGraphicsEffect(m_hide_effect);
+	m_hide_effect->setEnabled(false);
 
 	m_hide_timer = new QTimer(this);
 	m_hide_timer->setInterval(30);
-	connect(m_hide_timer, SIGNAL(timeout()), this, SLOT(fade()));
+	connect(m_hide_timer, &QTimer::timeout, this, &LoadScreen::fade);
 }
 
 //-----------------------------------------------------------------------------
@@ -108,6 +109,7 @@ void LoadScreen::setText(const QString& step)
 		m_hide_timer->stop();
 	}
 	m_hide_effect->setOpacity(1.0);
+	m_hide_effect->setEnabled(false);
 
 	show();
 	raise();
@@ -119,6 +121,7 @@ void LoadScreen::setText(const QString& step)
 void LoadScreen::finish()
 {
 	m_hide_effect->setOpacity(1.0);
+	m_hide_effect->setEnabled(true);
 	m_hide_timer->start();
 }
 
@@ -156,6 +159,7 @@ void LoadScreen::fade()
 	if (m_hide_effect->opacity() <= 0.01) {
 		m_hide_timer->stop();
 		hide();
+		m_hide_effect->setEnabled(false);
 	}
 }
 

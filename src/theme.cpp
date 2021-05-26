@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 #include "theme.h"
 
-#include "session.h"
 #include "utils.h"
 
 #include <QtConcurrentRun>
@@ -28,6 +27,7 @@
 #include <QFile>
 #include <QImageReader>
 #include <QPainter>
+#include <QPainterPath>
 #include <QSettings>
 #include <QTextEdit>
 #include <QUuid>
@@ -181,6 +181,14 @@ Theme::Theme(const QString& id, bool is_default)
 
 Theme::~Theme()
 {
+}
+
+//-----------------------------------------------------------------------------
+
+Theme& Theme::operator=(const Theme& theme)
+{
+	d = theme.d;
+	return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -379,6 +387,7 @@ QImage Theme::render(const QSize& background, QRect& foreground, const int margi
 			break;
 		default:
 			// Centered
+			scaled /= pixelratio;
 			break;
 		}
 		source.setScaledSize(scaled * pixelratio);
@@ -386,8 +395,7 @@ QImage Theme::render(const QSize& background, QRect& foreground, const int margi
 		QImage back = source.read();
 		back.setDevicePixelRatio(pixelratio);
 
-		const qreal scale = pixelratio / 2.0;
-		painter.drawImage(QPointF((background.width() - scaled.width()) * scale, (background.height() - scaled.height()) * scale), back);
+		painter.drawImage(QPointF((background.width() - scaled.width()) / 2, (background.height() - scaled.height()) / 2), back);
 	} else if (backgroundType() == 1) {
 		// Tiled
 		QImage back(backgroundImage());
@@ -413,7 +421,7 @@ QImage Theme::render(const QSize& background, QRect& foreground, const int margi
 
 	// Blur behind foreground
 	if (blurEnabled()) {
-		QImage blurred = image.copy(foreground);
+		QImage blurred = image.copy(QRect(foreground.topLeft() * pixelratio, foreground.bottomRight() * pixelratio));
 
 		painter.save();
 		painter.translate(foreground.x(), foreground.y());
@@ -502,7 +510,7 @@ void Theme::renderText(QImage background, const QRect& foreground, const qreal p
 			f.merge(block_format);
 		}
 	}
-	preview_text.setTabStopWidth(tab_width);
+	preview_text.setTabStopDistance(tab_width);
 	preview_text.document()->setIndentWidth(tab_width);
 
 	// Set font

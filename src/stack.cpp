@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "stack.h"
 
 #include "action_manager.h"
+#include "alert.h"
 #include "alert_layer.h"
 #include "document.h"
 #include "find_dialog.h"
@@ -31,6 +32,7 @@
 #include "theme_renderer.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
 #include <QDir>
@@ -55,6 +57,7 @@
 Stack::Stack(QWidget* parent) :
 	QWidget(parent),
 	m_symbols_dialog(0),
+	m_printer(0),
 	m_current_document(0),
 	m_footer_margin(0),
 	m_header_margin(0),
@@ -73,26 +76,15 @@ Stack::Stack(QWidget* parent) :
 	m_menu = new QMenu(this);
 	m_menu_group = new QActionGroup(this);
 	m_menu_group->setExclusive(true);
-	connect(m_menu_group, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+	connect(m_menu_group, &QActionGroup::triggered, this, &Stack::actionTriggered);
 
 	m_find_dialog = new FindDialog(this);
-	connect(m_find_dialog, SIGNAL(findNextAvailable(bool)), this, SIGNAL(findNextAvailable(bool)));
+	connect(m_find_dialog, &FindDialog::findNextAvailable, this, &Stack::findNextAvailable);
 
-	m_printer = new QPrinter(QPrinter::HighResolution);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,3,0))
-	m_printer->setPageSize(QPageSize(QPageSize::Letter));
-	m_printer->setPageOrientation(QPageLayout::Portrait);
-	m_printer->setPageMargins(QMarginsF(1.0, 1.0, 1.0, 1.0), QPageLayout::Inch);
-#else
-	m_printer->setPageSize(QPrinter::Letter);
-	m_printer->setOrientation(QPrinter::Portrait);
-	m_printer->setPageMargins(1.0, 1.0, 1.0, 1.0, QPrinter::Inch);
-#endif
-
-	connect(ActionManager::instance(), SIGNAL(insertText(QString)), this, SLOT(insertSymbol(QString)));
+	connect(ActionManager::instance(), &ActionManager::insertText, this, &Stack::insertSymbol);
 
 	m_layout = new QGridLayout(this);
-	m_layout->setMargin(0);
+	m_layout->setContentsMargins(0, 0, 0, 0);
 	m_layout->setSpacing(0);
 	m_layout->setRowMinimumHeight(1, 6);
 	m_layout->setRowMinimumHeight(4, 6);
@@ -109,10 +101,10 @@ Stack::Stack(QWidget* parent) :
 	m_resize_timer = new QTimer(this);
 	m_resize_timer->setInterval(50);
 	m_resize_timer->setSingleShot(true);
-	connect(m_resize_timer, SIGNAL(timeout()), this, SLOT(updateBackground()));
+	connect(m_resize_timer, &QTimer::timeout, this, QOverload<>::of(&Stack::updateBackground));
 
 	m_theme_renderer = new ThemeRenderer(this);
-	connect(m_theme_renderer, SIGNAL(rendered(QImage,QRect,Theme)), this, SLOT(updateBackground(QImage,QRect)));
+	connect(m_theme_renderer, &ThemeRenderer::rendered, this, QOverload<const QImage&, const QRect&>::of(&Stack::updateBackground));
 
 	setHeaderVisible(Preferences::instance().alwaysShowHeader());
 	setFooterVisible(Preferences::instance().alwaysShowFooter());
@@ -137,16 +129,16 @@ Stack::~Stack()
 void Stack::addDocument(Document* document)
 {
 	document->setSceneList(m_scenes);
-	connect(document, SIGNAL(alert(Alert*)), m_alerts, SLOT(addAlert(Alert*)));
-	connect(document, SIGNAL(alignmentChanged()), this, SIGNAL(updateFormatAlignmentActions()));
-	connect(document, SIGNAL(changedName()), this, SIGNAL(updateFormatActions()));
-	connect(document, SIGNAL(footerVisible(bool)), this, SLOT(setFooterVisible(bool)));
-	connect(document, SIGNAL(headerVisible(bool)), this, SLOT(setHeaderVisible(bool)));
-	connect(document, SIGNAL(scenesVisible(bool)), this, SLOT(setScenesVisible(bool)));
-	connect(document->text(), SIGNAL(copyAvailable(bool)), this, SIGNAL(copyAvailable(bool)));
-	connect(document->text(), SIGNAL(redoAvailable(bool)), this, SIGNAL(redoAvailable(bool)));
-	connect(document->text(), SIGNAL(undoAvailable(bool)), this, SIGNAL(undoAvailable(bool)));
-	connect(document->text(), SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SIGNAL(updateFormatActions()));
+	connect(document, &Document::alert, m_alerts, &AlertLayer::addAlert);
+	connect(document, &Document::alignmentChanged, this, &Stack::updateFormatAlignmentActions);
+	connect(document, &Document::changedName, this, &Stack::updateFormatActions);
+	connect(document, &Document::footerVisible, this, &Stack::setFooterVisible);
+	connect(document, &Document::headerVisible, this, &Stack::setHeaderVisible);
+	connect(document, &Document::scenesVisible, this, &Stack::setScenesVisible);
+	connect(document->text(), &QTextEdit::copyAvailable, this, &Stack::copyAvailable);
+	connect(document->text(), &QTextEdit::redoAvailable, this, &Stack::redoAvailable);
+	connect(document->text(), &QTextEdit::undoAvailable, this, &Stack::undoAvailable);
+	connect(document->text(), &QTextEdit::currentCharFormatChanged, this, &Stack::updateFormatActions);
 
 	m_documents.append(document);
 	m_contents->addWidget(document);
@@ -299,21 +291,6 @@ void Stack::autoCache()
 
 //-----------------------------------------------------------------------------
 
-void Stack::autoSave()
-{
-	for (Document* document : m_documents) {
-		if (document->isModified()) {
-			if (!document->filename().isEmpty()) {
-				document->save();
-			} else {
-				document->cache();
-			}
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------
-
 void Stack::checkSpelling()
 {
 	m_current_document->checkSpelling();
@@ -397,6 +374,7 @@ void Stack::pasteUnformatted()
 
 void Stack::pageSetup()
 {
+	initPrinter();
 	QPageSetupDialog dialog(m_printer, this);
 	dialog.exec();
 }
@@ -405,6 +383,7 @@ void Stack::pageSetup()
 
 void Stack::print()
 {
+	initPrinter();
 	m_current_document->print(m_printer);
 }
 
@@ -572,7 +551,7 @@ void Stack::showSymbols()
 		m_symbols_dialog = new SymbolsDialog(this);
 		m_symbols_dialog->setInsertEnabled(!m_current_document->isReadOnly());
 		m_symbols_dialog->setPreviewFont(m_current_document->text()->font());
-		connect(m_symbols_dialog, SIGNAL(insertText(QString)), this, SLOT(insertSymbol(QString)));
+		connect(m_symbols_dialog, &SymbolsDialog::insertText, this, &Stack::insertSymbol);
 		window()->unsetCursor();
 	}
 
@@ -672,7 +651,11 @@ void Stack::showHeader()
 
 void Stack::mouseMoveEvent(QMouseEvent* event)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+	int y = mapFromGlobal(event->globalPosition()).y();
+#else
 	int y = mapFromGlobal(event->globalPos()).y();
+#endif
 	bool header_visible = y <= m_header_margin;
 	bool footer_visible = y >= (height() - m_footer_margin);
 	setHeaderVisible(header_visible);
@@ -791,7 +774,7 @@ void Stack::updateBackground(const QImage& image, const QRect& foreground)
 
 void Stack::updateMargin()
 {
-	int margin = std::max(m_theme.foregroundMargin().value(), style()->pixelMetric(QStyle::PM_ScrollBarExtent));
+	int margin = std::max(m_theme.foregroundMargin().value(), 1);
 	if (Preferences::instance().alwaysShowFooter()) {
 		margin = std::max(m_footer_margin, margin);
 	}
@@ -832,6 +815,20 @@ void Stack::updateMenuIndexes()
 	for (int i = 0; i < m_document_actions.size(); ++i) {
 		m_document_actions[i]->setData(i);
 	}
+}
+
+//-----------------------------------------------------------------------------
+
+void Stack::initPrinter()
+{
+	if (m_printer) {
+		return;
+	}
+
+	m_printer = new QPrinter(QPrinter::HighResolution);
+	m_printer->setPageSize(QPageSize(QPageSize::Letter));
+	m_printer->setPageOrientation(QPageLayout::Portrait);
+	m_printer->setPageMargins(QMarginsF(1.0, 1.0, 1.0, 1.0), QPageLayout::Inch);
 }
 
 //-----------------------------------------------------------------------------

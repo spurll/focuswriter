@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void BlockStats::checkSpelling(const QString& text, const DictionaryRef& diction
 {
 	m_misspelled.clear();
 	if (!text.isEmpty()) {
-		QStringRef word;
+		WordRef word;
 		while ((word = dictionary.check(text, word.position() + word.length())).isNull() == false) {
 			m_misspelled.append(word);
 		}
@@ -79,7 +79,7 @@ void BlockStats::update(const QString& text)
 		} else if (i->isSpace()) {
 			word = false;
 			m_spaces++;
-		} else if (*i != 0x2019 && *i != 0x0027 && *i != 0x002d) {
+		} else if (*i != u'’' && *i != '\'' && *i != '-') {
 			word = false;
 		}
 	}

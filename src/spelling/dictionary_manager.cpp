@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2009-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QRegularExpression>
 #include <QTextStream>
 
 #include <algorithm>
@@ -59,11 +60,11 @@ public:
 		return true;
 	}
 
-	QStringRef check(const QString& string, int start_at) const
+	WordRef check(const QString& string, int start_at) const
 	{
 		Q_UNUSED(string);
 		Q_UNUSED(start_at);
-		return QStringRef();
+		return WordRef();
 	}
 
 	QStringList suggestions(const QString& word) const
@@ -124,7 +125,7 @@ QString DictionaryManager::availableDictionary(const QString& language) const
 {
 	QStringList languages = availableDictionaries();
 	if (!languages.isEmpty() && !languages.contains(language)) {
-		int close = languages.indexOf(QRegExp(language.left(2) + ".*"));
+		int close = languages.indexOf(QRegularExpression(language.left(2) + ".*"));
 		return (close != -1) ? languages.at(close) : (languages.contains("en_US") ? "en_US" : languages.first());
 	} else {
 		return language;
@@ -274,7 +275,9 @@ void DictionaryManager::setPersonal(const QStringList& words)
 	QFile file(m_path + "/personal");
 	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		QTextStream stream(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 		stream.setCodec("UTF-8");
+#endif
 		for (const QString& word : m_personal) {
 			stream << word << "\n";
 		}
@@ -299,7 +302,9 @@ DictionaryManager::DictionaryManager()
 	QFile file(m_path + "/personal");
 	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream stream(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 		stream.setCodec("UTF-8");
+#endif
 		while (!stream.atEnd()) {
 			m_personal.append(stream.readLine());
 		}

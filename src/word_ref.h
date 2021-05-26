@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2013 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,48 +17,36 @@
  *
  ***********************************************************************/
 
-#ifndef FONT_COMBOBOX_H
-#define FONT_COMBOBOX_H
+#ifndef WORD_REF
+#define WORD_REF
 
-#include <QComboBox>
-#include <QFontDatabase>
-class QStringListModel;
-
-class FontComboBox : public QComboBox
+class WordRef
 {
-	Q_OBJECT
-
 public:
-	FontComboBox(QWidget* parent = 0);
-
-	QFont currentFont() const
+	WordRef(int position = 0, int length = 0) :
+		m_position(position),
+		m_length(length)
 	{
-		return m_current;
 	}
 
-	QFontDatabase::WritingSystem writingSystem() const
+	bool isNull() const
 	{
-		return m_system;
+		return !m_length;
 	}
 
-	void setWritingSystem(QFontDatabase::WritingSystem system);
+	int length() const
+	{
+		return m_length;
+	}
 
-public slots:
-	void setCurrentFont(const QFont& font);
-
-signals:
-	void currentFontChanged(const QFont& font);
-
-private slots:
-	void currentFamilyChanged(const QString& family);
-
-private:
-	void updateModel();
+	int position() const
+	{
+		return m_position;
+	}
 
 private:
-	QFont m_current;
-	QStringListModel* m_font_model;
-	QFontDatabase::WritingSystem m_system;
+	int m_position;
+	int m_length;
 };
 
 #endif

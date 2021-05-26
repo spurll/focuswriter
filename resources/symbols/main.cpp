@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2012, 2013, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2012-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,33 +34,40 @@
 
 #include <iostream>
 
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+QDataStream& operator<<(QDataStream& stream, char32_t c)
+{
+	return stream << quint32(c);
+}
+#endif
+
 struct Filter
 {
 	Filter(const QByteArray& name_ = QByteArray()) :
 		name(name_), size(0) { }
 
-	void addRange(quint32 start, quint32 end);
+	void addRange(char32_t start, char32_t end);
 
 	struct Range
 	{
 		Range() :
 			start(0), end(0) { }
 
-		Range(quint32 start_code, quint32 end_code) :
+		Range(char32_t start_code, char32_t end_code) :
 			start(start_code), end(end_code) { }
 
-		quint32 start;
-		quint32 end;
+		char32_t start;
+		char32_t end;
 	};
 
 	QByteArray name;
-	quint32 size;
+	char32_t size;
 	QVector<Range> ranges;
 };
 
 typedef QVector<Filter> FilterGroup;
 
-void Filter::addRange(quint32 start, quint32 end)
+void Filter::addRange(char32_t start, char32_t end)
 {
 	if (ranges.isEmpty() || (ranges.last().end != (start - 1))) {
 		ranges += Filter::Range(start, end);
@@ -126,7 +133,7 @@ int downloadAndParse(const QString& unicode_version, QDataStream::Version data_v
 		}
 	}
 
-	QHash<quint32, QByteArray> names;
+	QHash<char32_t, QByteArray> names;
 	QVector<FilterGroup> groups;
 
 	// Parse names
@@ -141,7 +148,7 @@ int downloadAndParse(const QString& unicode_version, QDataStream::Version data_v
 		QTextStream stream(&file);
 		while (!stream.atEnd()) {
 			const QStringList parts = stream.readLine().split(";");
-			const quint32 code = parts.at(0).toUInt(0, 16);
+			const char32_t code = parts.at(0).toUInt(0, 16);
 			QString name = parts.at(1);
 			if (name.startsWith('<')) {
 				name = parts.at(10);
@@ -181,7 +188,11 @@ int downloadAndParse(const QString& unicode_version, QDataStream::Version data_v
 			const QStringList parts = line.split(";");
 
 			// Find block code point range
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+			const QStringList range = parts.at(0).trimmed().split('.', Qt::SkipEmptyParts);
+#else
 			const QStringList range = parts.at(0).trimmed().split('.', QString::SkipEmptyParts);
+#endif
 			if (range.count() != 2) {
 				continue;
 			}
@@ -228,8 +239,12 @@ int downloadAndParse(const QString& unicode_version, QDataStream::Version data_v
 			const QStringList parts = line.split(";");
 
 			// Find script code point range
-			quint32 start, end;
+			char32_t start, end;
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+			QStringList range = parts.at(0).trimmed().split('.', Qt::SkipEmptyParts);
+#else
 			QStringList range = parts.at(0).trimmed().split('.', QString::SkipEmptyParts);
+#endif
 			if (range.count() == 1) {
 				start = end = range.at(0).toUInt(0, 16);
 			} else if (range.count() == 2) {
@@ -293,5 +308,5 @@ int main(int argc, char** argv)
 {
 	QCoreApplication app(argc, argv);
 
-	downloadAndParse("9.0.0", QDataStream::Qt_5_2);
+	downloadAndParse("13.0.0", QDataStream::Qt_5_9);
 }

@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# saboarpad <saboarpad@outlook.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: FocusWriter\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-14 20:43+0000\n"
-"PO-Revision-Date: 2014-03-25 21:47+0000\n"
-"Last-Translator: Graeme Gott <graeme@gottcode.org>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/focuswriter/"
+"PO-Revision-Date: 2018-10-27 09:32+0000\n"
+"Last-Translator: saboarpad <saboarpad@outlook.com>\n"
+"Language-Team: Hungarian (http://www.transifex.com/gottcode/focuswriter/"
 "language/hu/)\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -18,41 +19,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../focuswriter.appdata.xml.in.h:1 ../focuswriter.desktop.in.h:1
+#: ../focuswriter.appdata.xml.in:6 ../focuswriter.desktop.in:4
 msgid "FocusWriter"
 msgstr "FocusWriter"
 
-#: ../focuswriter.appdata.xml.in.h:2
+#: ../focuswriter.appdata.xml.in:7
 msgid "Fullscreen word processor"
-msgstr ""
+msgstr "Teljesképernyős szövegszerkesztő"
 
-#: ../focuswriter.appdata.xml.in.h:3
+#: ../focuswriter.appdata.xml.in:10
 msgid ""
 "FocusWriter is a simple, distraction-free word processor. It utilizes a hide-"
 "away interface that you access by moving your mouse to the edges of the "
 "screen, allowing the program to have a familiar look and feel to it while "
 "still getting out of the way so that you can immerse yourself in your work."
 msgstr ""
+"A FocusWriter egy egyszerű, figyelemelterelés-mentes szövegszerkesztő "
+"program. A felhasználói felületet elrejti a képernyőről, mely az egérkurzor "
+"képernyő széléhez húzva újra megjelenik. Így biztosítja a változatlan, "
+"ismerős felületet, mégsem akadályozza miközben elmerül a munkában."
 
-#: ../focuswriter.appdata.xml.in.h:4
+#: ../focuswriter.appdata.xml.in:11
 msgid ""
 "FocusWriter allows you to customize your environment by creating themes that "
 "control the font, colors, and background image to add ambiance. It also "
 "features on-the-fly updating statistics, daily goals, multiple open "
 "documents, spell-checking, and much more."
 msgstr ""
+"A FocusWriter lehetőséget biztosít Önnek, hogy testre szabja a szoftvert "
+"témák létrehozásával, melyek szabályozzák a : betűtípusokat, színeket és a "
+"háttérképet. Mindezen felül rendelkezik még számos funkcióval: azonnal "
+"frissülő statisztikákkal, napi célkeret kijelzéssel, több dokumentumot is "
+"kezel egy időben, helyesírás ellenőrzéssel, és még sok egyébbel."
 
-#: ../focuswriter.appdata.xml.in.h:5
+#: ../focuswriter.appdata.xml.in:12
 msgid ""
 "Additionally, when you open the program your current work in progress will "
 "automatically load and position you where you last left off so that you can "
 "immediately jump back in."
 msgstr ""
+"Ráadásul, amikor megnyitja a programot a legutóbbi munkája automatikusan "
+"betöltődik így biztosítva, hogy azonnal fejest ugorhasson a munkába, ott "
+"ahol előzőleg abbahagyta."
 
-#: ../focuswriter.desktop.in.h:2
+#: ../focuswriter.desktop.in:5
 msgid "Fullscreen Word Processor"
 msgstr "Teljesképernyős szövegszerkesztő"
 
-#: ../focuswriter.desktop.in.h:3
+#: ../focuswriter.desktop.in:6
 msgid "Write without distractions"
 msgstr "Írjon zavartalanul"

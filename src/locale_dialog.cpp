@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2010, 2011, 2012, 2014, 2015, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2010-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,46 +98,42 @@ void LocaleDialog::loadTranslator(const QString& name, const QStringList& datadi
 
 	// Find current locale
 	m_current = QSettings().value("Locale/Language").toString();
-	QString current = !m_current.isEmpty() ? m_current : QLocale::system().name();
-	QStringList translations = findTranslations();
-	if (!translations.contains(m_appname + current)) {
-		current = current.left(2);
-		if (!translations.contains(m_appname + current)) {
-			current.clear();
-		}
+	if (!m_current.isEmpty()) {
+		QLocale::setDefault(QLocale(m_current));
 	}
-	if (!current.isEmpty()) {
-		QLocale::setDefault(current);
-	} else {
-		current = "en";
-	}
+	const QString locale = QLocale().name();
 
 	// Load translators
-	static QTranslator qt_translator;
-	if (translations.contains("qtbase_" + current) || translations.contains("qtbase_" + current.left(2))) {
-		qt_translator.load("qtbase_" + current, m_path);
-	} else {
-		qt_translator.load("qtbase_" + current, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-	}
-	QCoreApplication::installTranslator(&qt_translator);
-
 	static QTranslator translator;
-	translator.load(m_appname + current, m_path);
-	QCoreApplication::installTranslator(&translator);
+	if (translator.load(m_appname + locale, m_path)) {
+		QCoreApplication::installTranslator(&translator);
 
-	// Work around bug in Qt 5 where text direction is not loaded
-	QGuiApplication::setLayoutDirection(QLocale(current).textDirection());
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+		const QString path = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
+#else
+		const QString path = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#endif
+
+		static QTranslator qtbase_translator;
+		if (qtbase_translator.load("qtbase_" + locale, m_path) || qtbase_translator.load("qtbase_" + locale, path)) {
+			QCoreApplication::installTranslator(&qtbase_translator);
+		}
+
+		static QTranslator qt_translator;
+		if (qt_translator.load("qt_" + locale, m_path) || qt_translator.load("qt_" + locale, path)) {
+			QCoreApplication::installTranslator(&qt_translator);
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
 
 QString LocaleDialog::languageName(const QString& language)
 {
-	QString lang_code = language.left(5);
-	QLocale locale(lang_code);
 	QString name;
-	if (lang_code.length() > 2) {
-		if (locale.name() == lang_code) {
+	const QLocale locale(language);
+	if (language.contains('_')) {
+		if (locale.name() == language) {
 			name = locale.nativeLanguageName() + " (" + locale.nativeCountryName() + ")";
 		} else {
 			name = locale.nativeLanguageName() + " (" + language + ")";

@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2012, 2014, 2016 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2012-2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 	m_recent->verticalHeader()->hide();
 	m_recent->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	m_recent->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	connect(m_recent, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)), this, SLOT(recentSymbolClicked(QTableWidgetItem*)));
-	connect(m_recent, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+	connect(m_recent, &QTableWidget::currentItemChanged, this, &SymbolsDialog::recentSymbolClicked);
+	connect(m_recent, &QTableWidget::doubleClicked, this, &SymbolsDialog::accept);
 
 	QVBoxLayout* recent_layout = new QVBoxLayout(recent_group);
 	recent_layout->addWidget(m_recent);
@@ -131,10 +131,10 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 	m_contents->addWidget(sidebar);
 
 	m_groups = new QComboBox(sidebar);
-	connect(m_groups, SIGNAL(activated(int)), this, SLOT(showGroup(int)));
+	connect(m_groups, QOverload<int>::of(&QComboBox::activated), this, &SymbolsDialog::showGroup);
 
 	QVBoxLayout* sidebar_layout = new QVBoxLayout(sidebar);
-	sidebar_layout->setMargin(0);
+	sidebar_layout->setContentsMargins(0, 0, 0, 0);
 	sidebar_layout->addWidget(m_groups);
 
 	QStringList groups = m_model->filterGroups();
@@ -168,8 +168,8 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 	m_view->horizontalHeader()->hide();
 	m_view->verticalHeader()->hide();
 	m_view->setModel(m_model);
-	connect(m_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(symbolClicked(QModelIndex)));
-	connect(m_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+	connect(m_view->selectionModel(), &QItemSelectionModel::currentChanged, this, &SymbolsDialog::symbolClicked);
+	connect(m_view, &QTableView::doubleClicked, this, &SymbolsDialog::accept);
 
 	m_contents->addWidget(m_view);
 	m_contents->setStretchFactor(1, 1);
@@ -191,7 +191,7 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 	m_symbol_preview->setFixedSize(size, size);
 
 	m_symbol_shortcut = new ShortcutEdit(details_group);
-	connect(m_symbol_shortcut, SIGNAL(changed()), this, SLOT(shortcutChanged()));
+	connect(m_symbol_shortcut, &ShortcutEdit::changed, this, &SymbolsDialog::shortcutChanged);
 
 	m_symbol_name = new ElideLabel(details_group);
 
@@ -211,8 +211,8 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 	// Create buttons
 	QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
 	buttons->button(QDialogButtonBox::Close)->setAutoDefault(false);
-	connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(buttons, &QDialogButtonBox::accepted, this, &SymbolsDialog::accept);
+	connect(buttons, &QDialogButtonBox::rejected, this, &SymbolsDialog::reject);
 
 	m_insert_button = buttons->addButton(tr("Insert"), QDialogButtonBox::AcceptRole);
 	m_insert_button->setAutoDefault(true);
@@ -238,8 +238,8 @@ SymbolsDialog::SymbolsDialog(QWidget* parent) :
 
 	// Fetch list of recently used symbols
 	QList<QVariant> recent = settings.value("SymbolsDialog/Recent").toList();
-	for (int i = 0, count = std::min(16, recent.count()); i < count; ++i) {
-		quint32 unicode = recent.at(i).toUInt();
+	for (int i = 0, count = std::min(16, int(recent.count())); i < count; ++i) {
+		char32_t unicode = recent.at(i).toUInt();
 		QTableWidgetItem* item = new QTableWidgetItem(QString::fromUcs4(&unicode, 1));
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setData(Qt::UserRole, unicode);
@@ -268,9 +268,9 @@ void SymbolsDialog::setInsertEnabled(bool enabled)
 	m_insert_button->setEnabled(enabled);
 
 	if (enabled) {
-		connect(m_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+		connect(m_view, &QTableView::doubleClicked, this, &SymbolsDialog::accept);
 	} else {
-		disconnect(m_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
+		disconnect(m_view, &QTableView::doubleClicked, this, &SymbolsDialog::accept);
 	}
 }
 
@@ -289,7 +289,7 @@ void SymbolsDialog::accept()
 {
 	QModelIndex symbol = m_view->currentIndex();
 	if (symbol.isValid()) {
-		quint32 unicode = symbol.internalId();
+		char32_t unicode = symbol.internalId();
 
 		// Remove symbol from recent list
 		for (int i = 0, count = m_recent->columnCount(); i < count; ++i) {
@@ -356,7 +356,7 @@ void SymbolsDialog::showFilter(QListWidgetItem* filter)
 void SymbolsDialog::showGroup(int group)
 {
 	for (QListWidget* filters : m_filters) {
-		disconnect(filters, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(showFilter(QListWidgetItem*)));
+		disconnect(filters, &QListWidget::currentItemChanged, this, &SymbolsDialog::showFilter);
 		filters->clearSelection();
 	}
 
@@ -369,7 +369,7 @@ void SymbolsDialog::showGroup(int group)
 
 	if (m_model->rowCount()) {
 		QModelIndex symbol = m_view->currentIndex();
-		quint32 unicode = symbol.internalId();
+		char32_t unicode = symbol.internalId();
 
 		if (!selectSymbol(unicode)) {
 			selectSymbol(' ');
@@ -378,7 +378,7 @@ void SymbolsDialog::showGroup(int group)
 		filters->clearSelection();
 	}
 
-	connect(filters, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(showFilter(QListWidgetItem*)));
+	connect(filters, &QListWidget::currentItemChanged, this, &SymbolsDialog::showFilter);
 }
 
 //-----------------------------------------------------------------------------
@@ -387,7 +387,7 @@ void SymbolsDialog::symbolClicked(const QModelIndex& symbol)
 {
 	if (symbol.isValid()) {
 		// Show symbol details
-		quint32 unicode = symbol.internalId();
+		char32_t unicode = symbol.internalId();
 		QString name = m_model->symbolName(unicode);
 		m_symbol_preview_item->setText(symbol.data(Qt::DisplayRole).toString());
 		m_symbol_preview->setSceneRect(m_symbol_preview_item->boundingRect());
@@ -424,14 +424,14 @@ void SymbolsDialog::recentSymbolClicked(QTableWidgetItem* symbol)
 
 void SymbolsDialog::shortcutChanged()
 {
-	quint32 unicode = m_view->currentIndex().internalId();
+	char32_t unicode = m_view->currentIndex().internalId();
 	QKeySequence sequence = m_symbol_shortcut->shortcut();
 	ActionManager::instance()->setShortcut(unicode, sequence);
 }
 
 //-----------------------------------------------------------------------------
 
-bool SymbolsDialog::selectSymbol(quint32 unicode)
+bool SymbolsDialog::selectSymbol(char32_t unicode)
 {
 	int group = m_groups->currentIndex();
 

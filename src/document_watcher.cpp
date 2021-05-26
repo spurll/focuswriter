@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2012, 2013, 2015 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2012, 2013, 2015, 2019 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ DocumentWatcher::DocumentWatcher(QObject* parent) :
 {
 	m_instance = this;
 	m_watcher = new QFileSystemWatcher(this);
-	connect(m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(documentChanged(QString)));
+	connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &DocumentWatcher::documentChanged);
 }
 
 //-----------------------------------------------------------------------------
@@ -97,7 +97,15 @@ void DocumentWatcher::addWatch(Document* document)
 
 void DocumentWatcher::pauseWatch(Document* document)
 {
-	m_documents[document].ignored = true;
+	// Ignore path
+	Details& details = m_documents[document];
+	details.ignored = true;
+
+	// Remove watch
+	if (!details.path.isEmpty()) {
+		m_watcher->removePath(details.path);
+		details.path.clear();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -138,7 +146,11 @@ void DocumentWatcher::updateWatch(Document* document)
 	} else {
 		details.path = path;
 		details.modified = QDateTime();
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+		details.permissions = QFile::Permissions();
+#else
 		details.permissions = 0;
+#endif
 	}
 
 	// Update path
@@ -243,7 +255,7 @@ void DocumentWatcher::documentChanged(const QString& path)
 	}
 	m_updates.append(path);
 	if (parent() && (QApplication::activeWindow() == parent())) {
-		QTimer::singleShot(200, this, SLOT(processUpdates()));
+		QTimer::singleShot(200, this, &DocumentWatcher::processUpdates);
 	}
 }
 

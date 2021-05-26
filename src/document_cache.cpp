@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2012, 2013, 2014 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2012, 2013, 2014, 2019, 2020 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRandomGenerator>
 #include <QTextStream>
 
 #include <algorithm>
-#include <random>
 
 //-----------------------------------------------------------------------------
 
@@ -77,7 +77,9 @@ void DocumentCache::parseMapping(QStringList& files, QStringList& datafiles) con
 	QFile file(cache_path + "/mapping");
 	if (file.open(QFile::ReadOnly | QFile::Text)) {
 		QTextStream stream(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 		stream.setCodec("UTF-8");
+#endif
 		stream.setAutoDetectUnicode(true);
 
 		while (!stream.atEnd()) {
@@ -98,9 +100,9 @@ void DocumentCache::parseMapping(QStringList& files, QStringList& datafiles) con
 void DocumentCache::add(Document* document)
 {
 	m_filenames[document] = createFileName();
-	connect(document, SIGNAL(changedName()), this, SLOT(updateMapping()));
-	connect(document, SIGNAL(replaceCacheFile(Document*, QString)), this, SLOT(replaceCacheFile(Document*, QString)));
-	connect(document, SIGNAL(writeCacheFile(Document*, DocumentWriter*)), this, SLOT(writeCacheFile(Document*, DocumentWriter*)));
+	connect(document, &Document::changedName, this, &DocumentCache::updateMapping);
+	connect(document, &Document::replaceCacheFile, this, &DocumentCache::replaceCacheFile);
+	connect(document, &Document::writeCacheFile, this, &DocumentCache::writeCacheFile);
 	updateMapping();
 }
 
@@ -139,7 +141,9 @@ void DocumentCache::updateMapping()
 	QFile file(m_path + "/mapping");
 	if (file.open(QFile::WriteOnly | QFile::Text)) {
 		QTextStream stream(&file);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 		stream.setCodec("UTF-8");
+#endif
 		stream.setGenerateByteOrderMark(true);
 
 		for (int i = 0; i < m_ordering->count(); ++i) {
@@ -147,7 +151,12 @@ void DocumentCache::updateMapping()
 			if (!m_filenames.contains(document)) {
 				continue;
 			}
-			stream << QFileInfo(m_filenames[document]).baseName() << " " << document->filename() << endl;
+			stream << QFileInfo(m_filenames[document]).baseName() << " " << document->filename()
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+				<< Qt::endl;
+#else
+				<< endl;
+#endif
 		}
 		file.close();
 	}
@@ -210,12 +219,11 @@ QString DocumentCache::backupCache()
 
 QString DocumentCache::createFileName()
 {
-	std::random_device rd;
-
 	QString filename;
 	QDir dir(m_path);
 	do {
-		filename = QString("fw_%1").arg(rd(), 6, 36, QLatin1Char('0'));
+		quint32 value = QRandomGenerator::global()->generate();
+		filename = QString("fw_%1").arg(value, 6, 36, QLatin1Char('0'));
 	} while (dir.exists(filename));
 
 	return filename;
@@ -225,6 +233,11 @@ QString DocumentCache::createFileName()
 
 void DocumentCache::updateCacheFile(Document* document, const QString& cache_file)
 {
+	// Ensure new filenames only
+	if (m_filenames[document] == cache_file) {
+		return;
+	}
+
 	// Swap cache filename
 	QFile old_cache_file(m_path + m_filenames[document]);
 	m_filenames[document] = cache_file;

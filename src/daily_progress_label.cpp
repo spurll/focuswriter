@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2013 Graeme Gott <graeme@gottcode.org>
+ * Copyright (C) 2013, 2019 Graeme Gott <graeme@gottcode.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ DailyProgressLabel::DailyProgressLabel(DailyProgress* progress, QWidget* parent)
 	QLabel(parent),
 	m_progress(progress)
 {
-	setText(tr("%1% of daily goal").arg(0));
-	connect(m_progress, SIGNAL(progressChanged()), this, SLOT(progressChanged()));
+	setText(tr("%L1% of daily goal").arg(0));
+	connect(m_progress, &DailyProgress::progressChanged, this, &DailyProgressLabel::progressChanged);
 }
 
 //-----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ void DailyProgressLabel::mousePressEvent(QMouseEvent* event)
 
 void DailyProgressLabel::progressChanged()
 {
-	setText(tr("%1% of daily goal").arg(m_progress->percentComplete()));
+	setText(tr("%L1% of daily goal").arg(m_progress->percentComplete()));
 }
 
 //-----------------------------------------------------------------------------

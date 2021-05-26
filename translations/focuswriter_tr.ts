@@ -30,18 +30,6 @@
 <context>
     <name>DailyProgress</name>
     <message numerus="yes">
-        <source>%1% of %Ln minute(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%1% of %Ln word(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <source>%Ln word(s)</source>
         <translation>
             <numerusform>%Ln kelime</numerusform>
@@ -56,6 +44,18 @@
     <message>
         <source>0%</source>
         <translation>0%</translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln minute(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%L1% of %Ln word(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -90,8 +90,8 @@
 <context>
     <name>DailyProgressLabel</name>
     <message>
-        <source>%1% of daily goal</source>
-        <translation>Günlük hedeften % %1</translation>
+        <source>%L1% of daily goal</source>
+        <translation>Günlük hedeften % %L1</translation>
     </message>
 </context>
 <context>
@@ -282,10 +282,6 @@
         <translation>OpenDocument Metni</translation>
     </message>
     <message>
-        <source>OpenDocument Flat XML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Office Open XML</source>
         <translation>Ofis Açık XML</translation>
     </message>
@@ -304,6 +300,10 @@
     <message>
         <source>All Supported Files</source>
         <translation>Tüm Desteklenen Dosyalar</translation>
+    </message>
+    <message>
+        <source>OpenDocument Flat XML</source>
+        <translation>OpenDocument Düz XML</translation>
     </message>
 </context>
 <context>
@@ -473,10 +473,6 @@
         <translation>Kaydetme</translation>
     </message>
     <message>
-        <source>Automatically save changes</source>
-        <translation>Değişiklikleri otomatik olarak kaydet</translation>
-    </message>
-    <message>
         <source>Remember cursor position</source>
         <translation>İmleç konumu hatırla</translation>
     </message>
@@ -513,32 +509,12 @@
         <translation>Bugünkü ilerleme sıfırlansın mı?</translation>
     </message>
     <message>
-        <source>Remove current dictionary?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Write byte order mark in plain text files</source>
-        <translation type="unfinished"></translation>
+        <translation>Düz metin dosyalarında bayt sırası işareti yaz</translation>
     </message>
     <message>
         <source>Default format:</source>
         <translation>Varsayılan biçim:</translation>
-    </message>
-    <message>
-        <source>User Interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show scrollbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show top bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always show bottom bar</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Reset Today</source>
@@ -558,7 +534,7 @@
     </message>
     <message>
         <source>Minimum progress for streaks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Çizgiler için asgari ilerleme:</translation>
     </message>
     <message>
         <source>Detect word boundaries</source>
@@ -655,6 +631,26 @@
     <message>
         <source>Personal Dictionary</source>
         <translation>Kişisel Sözlük</translation>
+    </message>
+    <message>
+        <source>Remove current dictionary?</source>
+        <translation>Mevcut sözlük kaldırılsın mı?</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation>Kullanıcı Arayüzü</translation>
+    </message>
+    <message>
+        <source>Always show scrollbar</source>
+        <translation>Her zaman kaydırma çubuğunu göster</translation>
+    </message>
+    <message>
+        <source>Always show top bar</source>
+        <translation>Her zaman üst çubuğu göster</translation>
+    </message>
+    <message>
+        <source>Always show bottom bar</source>
+        <translation>Her zaman alt çubuğu göster</translation>
     </message>
 </context>
 <context>
@@ -970,7 +966,7 @@
     </message>
     <message>
         <source>Round Text Background Corners</source>
-        <translation type="unfinished"></translation>
+        <translation>Yuvarlak Metin Arka Plan Köşeleri</translation>
     </message>
     <message>
         <source>Radius:</source>
@@ -978,7 +974,7 @@
     </message>
     <message>
         <source>Blur Text Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Metinlerin Arkaplanını Bulanıklaştırma</translation>
     </message>
     <message>
         <source>Text Background Drop Shadow</source>
@@ -1112,14 +1108,6 @@
         <translation>Varsayılan</translation>
     </message>
     <message>
-        <source>Bitter Skies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enchantment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Gentle Blues</source>
         <translation>Kibar Mavi</translation>
     </message>
@@ -1130,14 +1118,6 @@
     <message>
         <source>Space Dreams</source>
         <translation>Uzay Düşleri</translation>
-    </message>
-    <message>
-        <source>Spy Games</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tranquility</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Writing Desk</source>
@@ -1190,6 +1170,22 @@
     <message>
         <source>Export Theme</source>
         <translation>Temayı Ver</translation>
+    </message>
+    <message>
+        <source>Bitter Skies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enchantment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spy Games</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tranquility</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1496,10 +1492,6 @@
         <translation>Ya&amp;zdır...</translation>
     </message>
     <message>
-        <source>Pa&amp;ge Setup...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>Ka&amp;pat</translation>
     </message>
@@ -1558,38 +1550,6 @@
     <message>
         <source>Fo&amp;rmat</source>
         <translation>&amp;Biçim</translation>
-    </message>
-    <message>
-        <source>&amp;Heading</source>
-        <translation>Başlık</translation>
-    </message>
-    <message>
-        <source>Heading &amp;1</source>
-        <translation>Başlık &amp;1</translation>
-    </message>
-    <message>
-        <source>Heading &amp;2</source>
-        <translation>Başlık &amp;2</translation>
-    </message>
-    <message>
-        <source>Heading &amp;3</source>
-        <translation>Başlık &amp;3</translation>
-    </message>
-    <message>
-        <source>Heading &amp;4</source>
-        <translation>Başlık &amp;4</translation>
-    </message>
-    <message>
-        <source>Heading &amp;5</source>
-        <translation>Başlık &amp;5</translation>
-    </message>
-    <message>
-        <source>Heading &amp;6</source>
-        <translation>Başlık &amp;6</translation>
-    </message>
-    <message>
-        <source>&amp;Normal</source>
-        <translation>&amp;Normal</translation>
     </message>
     <message>
         <source>&amp;Bold</source>
@@ -1716,16 +1676,8 @@
         <translation>&amp;Dökümanı Güncelle</translation>
     </message>
     <message>
-        <source>Update Document Smart Quotes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Update &amp;Selection</source>
         <translation>&amp;Seçilimi Güncelle</translation>
-    </message>
-    <message>
-        <source>Update Selection Smart Quotes</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Spelling...</source>
@@ -1816,10 +1768,6 @@
         <translation>Paragrafa Odaklan</translation>
     </message>
     <message>
-        <source>Ctrl+Shift+`</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
@@ -1850,6 +1798,54 @@
     <message>
         <source>About &amp;Qt</source>
         <translation>&amp;Qt Hakkında</translation>
+    </message>
+    <message>
+        <source>Pa&amp;ge Setup...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Heading</source>
+        <translation>Başlık</translation>
+    </message>
+    <message>
+        <source>Heading &amp;1</source>
+        <translation>Başlık &amp;1</translation>
+    </message>
+    <message>
+        <source>Heading &amp;2</source>
+        <translation>Başlık &amp;2</translation>
+    </message>
+    <message>
+        <source>Heading &amp;3</source>
+        <translation>Başlık &amp;3</translation>
+    </message>
+    <message>
+        <source>Heading &amp;4</source>
+        <translation>Başlık &amp;4</translation>
+    </message>
+    <message>
+        <source>Heading &amp;5</source>
+        <translation>Başlık &amp;5</translation>
+    </message>
+    <message>
+        <source>Heading &amp;6</source>
+        <translation>Başlık &amp;6</translation>
+    </message>
+    <message>
+        <source>&amp;Normal</source>
+        <translation>&amp;Normal</translation>
+    </message>
+    <message>
+        <source>Update Document Smart Quotes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Selection Smart Quotes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+`</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
